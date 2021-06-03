@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.composedemo.R
 import com.example.composedemo.bean.UserInfo
+import com.example.composedemo.util.MMkvHelper
 import com.example.composedemo.util.toast
 import com.example.composedemo.viewmodel.MyViewModel
 import java.lang.String
@@ -56,7 +57,7 @@ fun MainPageTop(
         StatusBarHeight()
         IconButton(
             modifier = Modifier.align(Alignment.End),
-            onClick = { actions.jumpSetting() }) {
+            onClick = { checkLogin { actions.jumpSetting() } }) {
             Icon(
                 painter = painterResource(R.mipmap.ic_mine_set),
                 contentDescription = "",
@@ -137,9 +138,7 @@ fun MainPageContents(actions: MainActions, userInfo: UserInfo?) {
         R.mipmap.ic_mine1,
         "我的积分",
         String.format("当前积分" + ": %s", userInfo?.coinCount ?: "")
-    ) {
-        toast("我的积分")
-    }
+    ) { checkLogin { actions.jumpScoreRankListPage() } }
     MainPageCountent(
         R.mipmap.ic_mine2,
         "我的收藏",
@@ -193,5 +192,15 @@ fun MainPageCountent(im: Int?, title: kotlin.String, countent: kotlin.String, on
                 .fillMaxWidth()
                 .background(color = colorResource(id = R.color.main_text))
         )
+    }
+}
+
+
+fun checkLogin(function: () -> Unit) {
+    val userInfo = MMkvHelper.getInstance().userInfo
+    if (userInfo == null) {
+        toast("清先登录")
+    } else {
+        function()
     }
 }

@@ -14,11 +14,13 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.blankj.utilcode.util.BarUtils
+import com.example.composedemo.App
 import com.example.composedemo.R
-import com.sczhizhou.navpad.util.px2dp
+import com.example.composedemo.util.px2dp
 
 @Composable
 fun TopBar(title: String, actions: MainActions) {

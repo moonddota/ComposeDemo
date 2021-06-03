@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
+import com.blankj.utilcode.util.BarUtils
 import com.example.composedemo.App
 import com.example.composedemo.R
 import com.example.composedemo.viewmodel.MyViewModel
@@ -31,7 +32,7 @@ import java.util.*
 
 @ExperimentalFoundationApi
 @Composable
-fun Home(actions: MainActions, myViewModel: MyViewModel) {
+fun Home(modifier: Modifier, actions: MainActions, myViewModel: MyViewModel) {
     val coroutineScope = rememberCoroutineScope()
     val tabs = CourseTabs.values()
     val position by myViewModel.position.observeAsState()
@@ -46,6 +47,7 @@ fun Home(actions: MainActions, myViewModel: MyViewModel) {
     val toolBarIcon = remember { mutableStateOf(Icons.Default.Search) }
 
     Scaffold(
+        modifier = modifier,
         backgroundColor = colorResource(id = R.color.white),
         bottomBar = {
             BottomNavigation(modifier = Modifier.height(56.dp)) {
@@ -81,10 +83,10 @@ fun Home(actions: MainActions, myViewModel: MyViewModel) {
     ) { innerPadding ->
         val modifier = Modifier.padding(innerPadding)
         when (position) {
-            CourseTabs.HOME_PAGE -> HomePage(actions,modifier, myViewModel)
-            CourseTabs.PROJECT -> ProjectPage(actions,modifier, myViewModel)
+            CourseTabs.HOME_PAGE -> HomePage(actions, modifier, myViewModel)
+            CourseTabs.PROJECT -> ProjectPage(actions, modifier, myViewModel)
             CourseTabs.OFFICIAL_ACCOUNT -> MessageList(getList(), Color.Red)
-            CourseTabs.MINE -> MainPage(actions, modifier,myViewModel)
+            CourseTabs.MINE -> MainPage(actions, modifier, myViewModel)
         }
     }
 }

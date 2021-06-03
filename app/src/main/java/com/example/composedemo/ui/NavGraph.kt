@@ -3,6 +3,7 @@ package com.example.composedemo.ui
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -23,13 +24,15 @@ object MainDestinations {
     const val ARTICLE_ROUTE_URL = "article_route_url"
     const val SETTING_PAGE = "setting_page"
     const val LOGIN_PAGE = "login_page"
+    const val SCORE_RANK_LIST_PAGE = "Score_Rank_List_Page"
 }
 
 @ExperimentalFoundationApi
 @ExperimentalPagingApi
 @Composable
 fun NavGraph(
-    startDestination: String = MainDestinations.HOME_PAGE_ROUTE
+    startDestination: String = MainDestinations.HOME_PAGE_ROUTE,
+    modifier: Modifier
 ) {
     val myViewModel: MyViewModel = viewModel()
 
@@ -41,7 +44,7 @@ fun NavGraph(
         startDestination = startDestination
     ) {
         composable(MainDestinations.HOME_PAGE_ROUTE) {
-            Home(actions, myViewModel)
+            Home(modifier,actions, myViewModel)
         }
         composable(
             "${MainDestinations.ARTICLE_ROUTE}/{$ARTICLE_ROUTE_URL}",
@@ -53,16 +56,20 @@ fun NavGraph(
             val parcelable = arguments.getString(ARTICLE_ROUTE_URL)
             val fromJson = Gson().fromJson(parcelable, ArticleBean::class.java)
             ArticlePage(
+                modifier = modifier,
                 article = fromJson,
                 viewModel = myViewModel,
                 onBack = actions.upPress
             )
         }
         composable(MainDestinations.SETTING_PAGE) {
-            SettingPage(actions,myViewModel)
+            SettingPage(modifier,actions,myViewModel)
         }
         composable(MainDestinations.LOGIN_PAGE) {
-            LoginPage(actions, myViewModel)
+            LoginPage(modifier,actions, myViewModel)
+        }
+        composable(MainDestinations.SCORE_RANK_LIST_PAGE) {
+            ScoreRankListPage(modifier,actions, myViewModel)
         }
     }
 }
@@ -88,10 +95,12 @@ class MainActions(navController: NavHostController) {
     val upPress: () -> Unit = {
         navController.navigateUp()
     }
-
     val loginOut:() ->Unit = {
         navController.navigateUp()
         jumpLogin()
+    }
+    val jumpScoreRankListPage :() -> Unit = {
+        navigate(navController, MainDestinations.SCORE_RANK_LIST_PAGE)
     }
 
     private fun navigate(navController: NavHostController, route: String) {

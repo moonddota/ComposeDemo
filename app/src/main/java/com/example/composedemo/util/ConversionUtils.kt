@@ -1,4 +1,4 @@
-package com.sczhizhou.navpad.util
+package com.example.composedemo.util
 
 import android.graphics.Rect
 import android.view.TouchDelegate

@@ -1,7 +1,6 @@
 package com.example.composedemo.common
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -18,10 +17,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.blankj.utilcode.util.BarUtils
 import com.example.composedemo.R
 import com.example.composedemo.ui.StatusBarHeight
-import com.sczhizhou.navpad.util.px2dp
 
 @Composable
 fun PlayAppBar(

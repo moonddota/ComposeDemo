@@ -103,13 +103,9 @@ class MyViewModel : BaseViewModel() {
 
     val userInfo = MutableLiveData<UserInfo>()
     fun getIntegral() = launchUI() {
-        val user = MMkvHelper.getInstance().userInfo
-        if (user == null) {
-            val res = repository.getIntegral()
-            userInfo.postValue(res.data)
-        } else {
-            userInfo.postValue(user)
-        }
+        val res = repository.getIntegral()
+        userInfo.postValue(res.data)
+        MMkvHelper.getInstance().saveUserInfo(res.data)
     }
 
     fun login(actions: MainActions, username: String, password: String) =

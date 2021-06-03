@@ -35,14 +35,15 @@ import com.example.composedemo.viewmodel.MyViewModel
 
 @ExperimentalFoundationApi
 @Composable
-fun LoginPage(actions: MainActions, myViewModel: MyViewModel) {
+fun LoginPage(modifier: Modifier, actions: MainActions, myViewModel: MyViewModel) {
 
-    LoginPages(actions, myViewModel)
+    LoginPages(modifier, actions, myViewModel)
 }
 
 @Composable
-fun LoginPages(actions: MainActions, myViewModel: MyViewModel) {
+fun LoginPages(modifier: Modifier, actions: MainActions, myViewModel: MyViewModel) {
     Scaffold(
+        modifier = modifier,
         topBar = {
             PlayAppBar(getHtmlText("登录"), click = {
                 actions.upPress()
@@ -62,7 +63,7 @@ fun LoginPages(actions: MainActions, myViewModel: MyViewModel) {
                 )
                 Spacer(modifier = Modifier.height(100.dp))
                 Button(
-                    onClick = { myViewModel.login(actions,emailState.text, passwordState.text) },
+                    onClick = { myViewModel.login(actions, emailState.text, passwordState.text) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(60.dp)

@@ -37,27 +37,14 @@ import com.example.composedemo.viewmodel.MyViewModel
 @Suppress("DEPRECATION") // allow ViewModelLifecycleScope call
 @Composable
 fun ArticlePage(
+    modifier: Modifier,
     article: ArticleBean?,
     viewModel: MyViewModel,
     onBack: () -> Unit
 ) {
-    val myViewModel: MyViewModel = viewModel()
-
-    ArticleScreen(
-        article = article,
-        viewModel = viewModel,
-        onBack = onBack
-    )
-}
-
-@Composable
-fun ArticleScreen(
-    article: ArticleBean?,
-    viewModel: MyViewModel,
-    onBack: () -> Unit,
-) {
     val x5WebView = rememberX5WebViewWithLifecycle()
     Scaffold(
+        modifier = modifier,
         topBar = {
             PlayAppBar(getHtmlText(article?.title ?: "文章详情"), click = {
                 if (x5WebView.canGoBack()) {

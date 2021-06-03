@@ -22,7 +22,7 @@ import com.example.composedemo.viewmodel.MyViewModel
 
 @ExperimentalFoundationApi
 @Composable
-fun SettingPage(actions: MainActions, myViewModel: MyViewModel) {
+fun SettingPage(modifier: Modifier, actions: MainActions, myViewModel: MyViewModel) {
     var loadArticleState by remember { mutableStateOf(false) }
     var showClierDialog by remember { mutableStateOf(false) }
     var showVersionDialog by remember { mutableStateOf(false) }
@@ -33,6 +33,7 @@ fun SettingPage(actions: MainActions, myViewModel: MyViewModel) {
     }
 
     Scaffold(
+        modifier = modifier,
         topBar = {
             PlayAppBar(getHtmlText("设置"), click = {
                 actions.upPress()
