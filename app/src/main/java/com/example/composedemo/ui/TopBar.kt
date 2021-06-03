@@ -1,5 +1,6 @@
 package com.example.composedemo.ui
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
@@ -21,6 +22,7 @@ import com.blankj.utilcode.util.BarUtils
 import com.example.composedemo.App
 import com.example.composedemo.R
 import com.example.composedemo.util.px2dp
+import java.lang.reflect.Method
 
 @Composable
 fun TopBar(title: String, actions: MainActions) {
@@ -55,3 +57,4 @@ fun TopBar(title: String, actions: MainActions) {
 fun StatusBarHeight() {
     Spacer(modifier = Modifier.height(px2dp(BarUtils.getStatusBarHeight().toFloat()).dp))
 }
+
