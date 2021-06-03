@@ -15,7 +15,6 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.blankj.utilcode.util.BarUtils
 import com.example.composedemo.R
 import com.example.composedemo.bean.ProjectListRes
 import com.example.composedemo.common.SwipeToRefreshAndLoadLayout
@@ -23,14 +22,13 @@ import com.example.composedemo.common.lce.SetLcePage
 import com.example.composedemo.model.PlayLoading
 import com.example.composedemo.model.PlaySuccess
 import com.example.composedemo.viewmodel.MyViewModel
-import com.sczhizhou.navpad.util.px2dp
 
 @ExperimentalFoundationApi
 @Composable
 fun ProjectPage(actions: MainActions, modifier: Modifier, myViewModel: MyViewModel) {
     var loadArticleState by remember { mutableStateOf(false) }
     val projectTables by myViewModel.projectTabs.observeAsState(PlayLoading)
-    val projectList = myViewModel.projectsListData.observeAsState()
+    val projectList by myViewModel.projectsListData.observeAsState()
     var position by remember { mutableStateOf(0) }
     var id by remember { mutableStateOf("") }
     var refreshingState by remember { mutableStateOf(false) }
@@ -39,15 +37,18 @@ fun ProjectPage(actions: MainActions, modifier: Modifier, myViewModel: MyViewMod
         loadArticleState = true
         myViewModel.getProjectTabs()
     }
+
+    val tables = mutableListOf<ProjectListRes>()
+    if (projectTables is PlaySuccess<*>) {
+        tables.addAll((projectTables as PlaySuccess<List<ProjectListRes>>).data)
+        if (tables.isNotEmpty()) id = tables[0].id ?: ""
+    }
+
     SetLcePage(playState = projectTables,
         onErrorClick = {
             myViewModel.getProjectTabs()
         }
     ) {
-
-        val tables = (projectTables as PlaySuccess<List<ProjectListRes>>).data
-        if (tables.isNotEmpty()) id = tables[0].id ?: ""
-
         Column(modifier = modifier) {
             StatusBarHeight()
             LazyRow(
@@ -69,12 +70,12 @@ fun ProjectPage(actions: MainActions, modifier: Modifier, myViewModel: MyViewMod
                                     if (position == index) return@clickable
                                     position = index
                                     id = tables[position].id ?: ""
+                                    refreshingState = true
                                     myViewModel.getListProjects(id, false)
                                 })
                     }
                 }
             }
-            val mList = projectList.value?: mutableListOf()
             SwipeToRefreshAndLoadLayout(
                 refreshingState = refreshingState,
                 loadState = refreshingState,
@@ -87,8 +88,11 @@ fun ProjectPage(actions: MainActions, modifier: Modifier, myViewModel: MyViewMod
                     myViewModel.getListProjects(id, true)
                 }
             ) {
-                Log.e("size", " size     ${mList.size}   id   ${id}")
-                ArticleListPaging(actions, mList, myViewModel)
+                Log.e(
+                    "size",
+                    " size     ${(projectList ?: mutableListOf()).size}   id   ${id}"
+                )
+                ArticleListPaging(actions, projectList ?: mutableListOf(), myViewModel)
                 refreshingState = false
             }
         }

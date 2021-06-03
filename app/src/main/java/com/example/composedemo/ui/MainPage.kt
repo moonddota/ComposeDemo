@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -34,15 +35,19 @@ fun MainPage(actions: MainActions, modifier: Modifier, myViewModel: MyViewModel)
         loadArticleState = true
         myViewModel.getIntegral()
     }
-
     Column() {
-        MainPageTop(actions, modifier, userInfo)
+        MainPageTop(actions, myViewModel, modifier, userInfo)
         MainPageContents(actions, userInfo)
     }
 }
 
 @Composable
-fun MainPageTop(actions: MainActions, modifier: Modifier, userInfo: UserInfo?) {
+fun MainPageTop(
+    actions: MainActions,
+    myViewModel: MyViewModel,
+    modifier: Modifier,
+    userInfo: UserInfo?
+) {
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -81,12 +86,13 @@ fun MainPageTop(actions: MainActions, modifier: Modifier, userInfo: UserInfo?) {
                     color = Color.White,
                     fontSize = 20.sp
                 )
-                Row {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = String.format("ID: %s", userInfo?.userId ?: ""),
                         color = Color.White,
                         fontSize = 16.sp,
                     )
+                    Spacer(modifier = Modifier.width(5.dp))
                     Text(
                         text = String.format("lv.%d", userInfo?.level ?: 0),
                         color = Color.White,

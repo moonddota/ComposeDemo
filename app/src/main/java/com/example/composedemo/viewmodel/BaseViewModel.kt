@@ -26,6 +26,26 @@ open class BaseViewModel : ViewModel(), LifecycleObserver {
         }
     }
 
+    fun <T> launch(
+        mLiveD: MutableLiveData<T>? = null,
+        onError: (e: Exception) -> Unit? = {},
+        IoBlock: suspend CoroutineScope.() -> T?,
+        UiBlock: () -> Unit = {}
+    ) {
+        viewModelScope.launch {
+            try {
+                val value = withContext(Dispatchers.IO) { IoBlock() }
+                mLiveD?.value = value
+                UiBlock()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                onError(e)
+                toast(e.message ?: "")
+                error.value = e
+            }
+        }
+    }
+
     /**
      * 请求失败，出现异常
      */

@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.blankj.utilcode.util.AppUtils
 import com.example.composedemo.R
 import com.example.composedemo.common.PlayAppBar
@@ -22,77 +23,67 @@ import com.example.composedemo.viewmodel.MyViewModel
 @ExperimentalFoundationApi
 @Composable
 fun SettingPage(actions: MainActions, myViewModel: MyViewModel) {
-
     var loadArticleState by remember { mutableStateOf(false) }
     var showClierDialog by remember { mutableStateOf(false) }
     var showVersionDialog by remember { mutableStateOf(false) }
     val cacheData by myViewModel.cacheData.observeAsState()
-    val isLogout by myViewModel.isLogout.observeAsState()
     if (!loadArticleState) {
         loadArticleState = true
         myViewModel.getCache()
     }
 
-    when (isLogout) {
-        true -> {
-            actions.upPress()
-            actions.jumpLogin()
-        }
-        else -> {
-            Scaffold(
-                topBar = {
-                    PlayAppBar(getHtmlText("设置"), click = {
-                        actions.upPress()
-                    })
-                },
-                content = {
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        MainPageCountent(null, "语言设置", "zh-CN") {
-                            toast("待开发")
-                        }
-                        MainPageCountent(null, "清除缓存", cacheData ?: "") {
-                            showClierDialog = true
-                        }
-                        MainPageCountent(null, "当前版本", AppUtils.getAppVersionName()) {
-                            showVersionDialog = true
-                        }
-                        MainPageCountent(null, "版本声明", "") {
-                            toast("版本声明")
-                        }
-                        MainPageCountent(null, "关于我们", "") {
-                            toast("关于我们")
-                        }
-                        Spacer(modifier = Modifier.height(100.dp))
-                        Button(
-                            colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.main_text)),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(60.dp)
-                                .padding(50.dp, 0.dp),
-                            shape = RoundedCornerShape(30.dp),
-                            onClick = {
-                                myViewModel.logout()
-                            }) {
-                            Text(
-                                text = "退出登录",
-                                color = Color.White,
-                                style = MaterialTheme.typography.h5
-                            )
-                        }
-                    }
-                    if (showClierDialog)
-                        clearDialog(myViewModel) {
-                            showClierDialog = false
-                        }
-
-                    if (showVersionDialog)
-                        versionDialog {
-                            showVersionDialog = false
-                        }
+    Scaffold(
+        topBar = {
+            PlayAppBar(getHtmlText("设置"), click = {
+                actions.upPress()
+            })
+        },
+        content = {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                MainPageCountent(null, "语言设置", "zh-CN") {
+                    toast("待开发")
                 }
-            )
+                MainPageCountent(null, "清除缓存", cacheData ?: "") {
+                    showClierDialog = true
+                }
+                MainPageCountent(null, "当前版本", AppUtils.getAppVersionName()) {
+                    showVersionDialog = true
+                }
+                MainPageCountent(null, "版本声明", "") {
+                    toast("版本声明")
+                }
+                MainPageCountent(null, "关于我们", "") {
+                    toast("关于我们")
+                }
+                Spacer(modifier = Modifier.height(100.dp))
+                Button(
+                    colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.main_text)),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp)
+                        .padding(50.dp, 0.dp),
+                    shape = RoundedCornerShape(30.dp),
+                    onClick = {
+                        myViewModel.logout(actions)
+                    }) {
+                    Text(
+                        text = "退出登录",
+                        color = Color.White,
+                        style = MaterialTheme.typography.h5
+                    )
+                }
+            }
+            if (showClierDialog)
+                clearDialog(myViewModel) {
+                    showClierDialog = false
+                }
+
+            if (showVersionDialog)
+                versionDialog {
+                    showVersionDialog = false
+                }
         }
-    }
+    )
 }
 
 @Composable

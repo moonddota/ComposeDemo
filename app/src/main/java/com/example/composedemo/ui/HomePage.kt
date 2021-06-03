@@ -1,5 +1,6 @@
 package com.example.composedemo.ui
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.*
@@ -60,15 +61,16 @@ fun HomePage(actions: MainActions, modifier: Modifier, myViewModel: MyViewModel)
                 refreshingState = refreshingState,
                 loadState = refreshingState,
                 onRefresh = {
-                    refreshingState = true
                     myViewModel.listArticle(false)
+                    refreshingState = true
                 },
                 onLoad = {
-                    refreshingState = true
                     myViewModel.listArticle(true)
+                    refreshingState = true
                 }
             ) {
                 ArticleListPaging(actions, homeList, myViewModel)
+                Log.e("tag","${homeList?.size?:0}")
                 refreshingState = false
             }
         }

@@ -37,16 +37,7 @@ import com.example.composedemo.viewmodel.MyViewModel
 @Composable
 fun LoginPage(actions: MainActions, myViewModel: MyViewModel) {
 
-    val state by myViewModel.loginState.observeAsState()
-
-    when (state) {
-        true -> {
-            actions.upPress()
-        }
-        else -> {
-            LoginPages(actions, myViewModel)
-        }
-    }
+    LoginPages(actions, myViewModel)
 }
 
 @Composable
@@ -71,7 +62,7 @@ fun LoginPages(actions: MainActions, myViewModel: MyViewModel) {
                 )
                 Spacer(modifier = Modifier.height(100.dp))
                 Button(
-                    onClick = { myViewModel.login(emailState.text, passwordState.text) },
+                    onClick = { myViewModel.login(actions,emailState.text, passwordState.text) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(60.dp)

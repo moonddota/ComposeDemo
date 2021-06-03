@@ -1,6 +1,5 @@
 package com.example.composedemo.ui
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -60,10 +59,9 @@ fun NavGraph(
             )
         }
         composable(MainDestinations.SETTING_PAGE) {
-            SettingPage(actions, myViewModel)
+            SettingPage(actions,myViewModel)
         }
         composable(MainDestinations.LOGIN_PAGE) {
-            myViewModel.loginState.postValue(false)
             LoginPage(actions, myViewModel)
         }
     }
@@ -89,6 +87,11 @@ class MainActions(navController: NavHostController) {
     }
     val upPress: () -> Unit = {
         navController.navigateUp()
+    }
+
+    val loginOut:() ->Unit = {
+        navController.navigateUp()
+        jumpLogin()
     }
 
     private fun navigate(navController: NavHostController, route: String) {

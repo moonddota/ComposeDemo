@@ -101,7 +101,6 @@ public class MMkvHelper {
     }
 
     public void logout() {
-        LogUtils.i("logout");
         mmkv.remove(C.USER_INFO);
     }
 

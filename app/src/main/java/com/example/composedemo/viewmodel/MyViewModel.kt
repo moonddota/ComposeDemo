@@ -1,8 +1,10 @@
 package com.example.composedemo.viewmodel
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import androidx.paging.*
 import com.example.composedemo.bean.ArticleBean
 import com.example.composedemo.bean.ProjectListRes
@@ -12,12 +14,16 @@ import com.example.composedemo.model.PlayState
 import com.example.composedemo.model.PlaySuccess
 import com.example.composedemo.repository.Repository
 import com.example.composedemo.ui.CourseTabs
+import com.example.composedemo.ui.MainActions
 import com.example.composedemo.util.CacheUtil
 import com.example.composedemo.util.MMkvHelper
+import com.example.composedemo.util.toast
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MyViewModel : BaseViewModel() {
     private val repository by lazy { Repository() }
-
 
     private val bannerList = MutableLiveData<PlayState>()
     val banners: LiveData<PlayState> = bannerList
@@ -32,13 +38,11 @@ class MyViewModel : BaseViewModel() {
         }
     }
 
-
     private val _position = MutableLiveData(CourseTabs.HOME_PAGE)
     val position: LiveData<CourseTabs> = _position
     fun onPositionChanged(position: CourseTabs) {
         _position.value = position
     }
-
 
     val homeListData = MutableLiveData<MutableList<ArticleBean>>()
     private val homeList by lazy { mutableListOf<ArticleBean>() }
@@ -55,9 +59,7 @@ class MyViewModel : BaseViewModel() {
         if (homeList.size >= listRes.data?.total ?: 0) {
             isMore = false
         } else {
-            Log.e("tag", "'homeListData  " + homeListData.value?.size)
             homeListData.postValue(homeList)
-            Log.e("tag", "'homeList  " + homeList.size)
             Log.e("tag", "'homeListData  " + homeListData.value?.size)
             isMore = true
         }
@@ -88,7 +90,6 @@ class MyViewModel : BaseViewModel() {
         }
     }
 
-
     val collectsStatus = MutableLiveData<Boolean>()
     fun cancelCollects(id: String) = launchUI {
         repository.cancelCollects(id)
@@ -100,38 +101,44 @@ class MyViewModel : BaseViewModel() {
         collectsStatus.postValue(true)
     }
 
-
     val userInfo = MutableLiveData<UserInfo>()
     fun getIntegral() = launchUI() {
-        val res = repository.getIntegral()
-        userInfo.postValue(res.data)
+        val user = MMkvHelper.getInstance().userInfo
+        if (user == null) {
+            val res = repository.getIntegral()
+            userInfo.postValue(res.data)
+        } else {
+            userInfo.postValue(user)
+        }
     }
 
-    val loginState = MutableLiveData<Boolean>()
-    fun login(username: String, password: String) = launchUI {
-        val res = repository.login(username, password)
-        MMkvHelper.getInstance().saveUserInfo(res.data)
-        loginState.postValue(true)
-    }
-
+    fun login(actions: MainActions, username: String, password: String) =
+        launch(null, {}, {
+            val res = repository.login(username, password)
+            MMkvHelper.getInstance().saveUserInfo(res.data)
+            userInfo.postValue(res.data)
+        }, {
+            actions.upPress()
+        })
 
     var cacheData = MutableLiveData<String>()
     fun getCache() = launchUI(cacheData) {
         CacheUtil.getTotalCacheSize()
     }
 
-
-    fun clearCache()= launchUI(cacheData) {
+    fun clearCache() = launchUI(cacheData) {
         CacheUtil.clearAllCache()
         CacheUtil.getTotalCacheSize()
     }
 
-    val isLogout = MutableLiveData<Boolean>()
-    fun logout() = launchUI(isLogout) {
+    @SuppressLint("NullSafeMutableLiveData")
+    fun logout(actions: MainActions) = launch(null, {}, {
         repository.logout()
         MMkvHelper.getInstance().logout()
-        true
-    }
+        userInfo.postValue(null)
+    }, {
+        actions.loginOut()
+    })
 
 }
 
