@@ -6,9 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
-import com.example.composedemo.bean.ArticleBean
-import com.example.composedemo.bean.ProjectListRes
-import com.example.composedemo.bean.UserInfo
+import com.example.composedemo.bean.*
 import com.example.composedemo.model.PlayError
 import com.example.composedemo.model.PlayState
 import com.example.composedemo.model.PlaySuccess
@@ -135,6 +133,17 @@ class MyViewModel : BaseViewModel() {
     }, {
         actions.loginOut()
     })
+
+    val listIntegralData = MutableLiveData<PlayState>()
+    private val listIntegralList by lazy { mutableListOf<RankBean>() }
+    private var listIntegralPage = 1
+    fun listIntegral(isMore: Boolean) = launchUI() {
+        listIntegralPage = if (isMore) ++listIntegralPage else 1
+        val res = repository.listIntegral(listIntegralPage)
+        if (isMore) listIntegralList.clear()
+        listIntegralList.addAll(res.data?.datas ?: listOf())
+        listIntegralData.postValue(PlaySuccess(listIntegralList))
+    }
 
 }
 

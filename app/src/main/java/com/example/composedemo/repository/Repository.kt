@@ -1,9 +1,6 @@
 package com.example.composedemo.repository
 
-import com.example.composedemo.bean.ArticleListRes
-import com.example.composedemo.bean.BannerRes
-import com.example.composedemo.bean.ProjectListRes
-import com.example.composedemo.bean.UserInfo
+import com.example.composedemo.bean.*
 import com.example.composedemo.network.BaseData
 import com.example.composedemo.network.BaseRepository
 import com.example.composedemo.network.api.RequestService
@@ -63,6 +60,10 @@ class Repository : BaseRepository() {
 
     suspend fun logout(): BaseData<Any> = request {
         RequestService.instance.logout()
+    }
+
+    suspend fun listIntegral(page: Int): BaseData<RankListRes> = request {
+        RequestService.instance.listIntegral(page)
     }
 
 }

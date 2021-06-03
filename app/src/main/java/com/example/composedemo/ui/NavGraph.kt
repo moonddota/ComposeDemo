@@ -44,7 +44,7 @@ fun NavGraph(
         startDestination = startDestination
     ) {
         composable(MainDestinations.HOME_PAGE_ROUTE) {
-            Home(modifier,actions, myViewModel)
+            Home(modifier, actions, myViewModel)
         }
         composable(
             "${MainDestinations.ARTICLE_ROUTE}/{$ARTICLE_ROUTE_URL}",
@@ -63,13 +63,13 @@ fun NavGraph(
             )
         }
         composable(MainDestinations.SETTING_PAGE) {
-            SettingPage(modifier,actions,myViewModel)
+            SettingPage(modifier, actions, myViewModel)
         }
         composable(MainDestinations.LOGIN_PAGE) {
-            LoginPage(modifier,actions, myViewModel)
+            LoginPage(modifier, actions, myViewModel)
         }
         composable(MainDestinations.SCORE_RANK_LIST_PAGE) {
-            ScoreRankListPage(modifier,actions, myViewModel)
+            ScoreRankListPage(modifier, actions, myViewModel)
         }
     }
 }
@@ -95,11 +95,11 @@ class MainActions(navController: NavHostController) {
     val upPress: () -> Unit = {
         navController.navigateUp()
     }
-    val loginOut:() ->Unit = {
+    val loginOut: () -> Unit = {
         navController.navigateUp()
         jumpLogin()
     }
-    val jumpScoreRankListPage :() -> Unit = {
+    val jumpScoreRankListPage: () -> Unit = {
         navigate(navController, MainDestinations.SCORE_RANK_LIST_PAGE)
     }
 
