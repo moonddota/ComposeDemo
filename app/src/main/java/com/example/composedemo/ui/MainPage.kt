@@ -13,10 +13,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.composedemo.R
@@ -116,9 +116,8 @@ fun MainPageTop(
                         color = colorResource(id = R.color.main_text_light),
                         shape = RoundedCornerShape(10.dp, 0.dp, 0.dp, 10.dp)
                     )
-                    .clickable {
-                        toast("排行榜")
-                    }) {
+                    .clickable { actions.jumpScoreRankListPage() })
+            {
                 Spacer(modifier = Modifier.width(10.dp))
                 Image(
                     painter = painterResource(id = R.mipmap.ic_mine_score),
@@ -136,16 +135,14 @@ fun MainPageTop(
 fun MainPageContents(actions: MainActions, userInfo: UserInfo?) {
     MainPageCountent(
         R.mipmap.ic_mine1,
-        "我的积分",
+        stringResource(id = R.string.mine_integral),
         String.format("当前积分" + ": %s", userInfo?.coinCount ?: "")
-    ) { checkLogin { actions.jumpScoreRankListPage() } }
+    ) { checkLogin { actions.jumpMyScorePage() } }
     MainPageCountent(
         R.mipmap.ic_mine2,
-        "我的收藏",
+        stringResource(id = R.string.mine_collect),
         ""
-    ) {
-        toast("我的收藏")
-    }
+    ) { checkLogin { actions.jumpMyCollectPage() } }
     MainPageCountent(
         R.mipmap.ic_mine3,
         "我的分享",
@@ -155,11 +152,9 @@ fun MainPageContents(actions: MainActions, userInfo: UserInfo?) {
     }
     MainPageCountent(
         R.mipmap.ic_mine4,
-        "开源项目",
+        stringResource(id = R.string.mine_open_source_project),
         ""
-    ) {
-        toast("开源项目")
-    }
+    ) { actions.jumpOpenSourcePage() }
     MainPageCountent(
         R.mipmap.ic_mine5,
         "关于作者",
@@ -171,7 +166,7 @@ fun MainPageContents(actions: MainActions, userInfo: UserInfo?) {
 
 @Composable
 fun MainPageCountent(im: Int?, title: kotlin.String, countent: kotlin.String, onClick: () -> Unit) {
-    Column {
+    Column(modifier = Modifier.clickable { onClick() }) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(15.dp)
@@ -182,9 +177,7 @@ fun MainPageCountent(im: Int?, title: kotlin.String, countent: kotlin.String, on
             Spacer(modifier = Modifier.width(10.dp))
             Text(text = title, color = Color.Black, modifier = Modifier.weight(1f))
             Text(text = countent, color = Color.Black)
-            IconButton(onClick = { onClick() }) {
-                Icon(painter = painterResource(id = R.mipmap.ic_mine_into), contentDescription = "")
-            }
+            Icon(painter = painterResource(id = R.mipmap.ic_mine_into), contentDescription = "")
         }
         Spacer(
             modifier = Modifier

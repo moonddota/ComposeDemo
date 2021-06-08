@@ -1,7 +1,6 @@
 package com.example.composedemo.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -36,8 +35,13 @@ import com.example.composedemo.viewmodel.MyViewModel
 @ExperimentalFoundationApi
 @Composable
 fun LoginPage(modifier: Modifier, actions: MainActions, myViewModel: MyViewModel) {
+    val showLoging by myViewModel.showLoging.observeAsState()
 
-    LoginPages(modifier, actions, myViewModel)
+    if (showLoging == true)
+        LoginPages(modifier, actions, myViewModel)
+    else
+        RegisterPage(modifier, actions, myViewModel)
+
 }
 
 @Composable
@@ -45,9 +49,9 @@ fun LoginPages(modifier: Modifier, actions: MainActions, myViewModel: MyViewMode
     Scaffold(
         modifier = modifier,
         topBar = {
-            PlayAppBar(getHtmlText("登录"), click = {
-                actions.upPress()
-            })
+            PlayAppBar(
+                title = stringResource(id = R.string.sign_in),
+                click = { actions.upPress() })
         },
         content = {
             Column(modifier = Modifier.fillMaxWidth()) {
@@ -78,14 +82,14 @@ fun LoginPages(modifier: Modifier, actions: MainActions, myViewModel: MyViewMode
                         fontSize = 20.sp
                     )
                 }
-                TextButton(
-                    modifier = Modifier
-                        .align(Alignment.End)
-                        .padding(50.dp, 100.dp, 50.dp, 0.dp),
-                    onClick = {
-                        toast("忘记密码")
-                    }) {
-                    Text(text = stringResource(id = R.string.forgot_password))
+                Row(modifier = Modifier.padding(50.dp, 100.dp, 50.dp, 0.dp)) {
+                    TextButton(onClick = { myViewModel.showLoging.postValue(false) }) {
+                        Text(text = stringResource(id = R.string.forgot_password))
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    TextButton(onClick = { toast("忘记密码") }) {
+                        Text(text = stringResource(id = R.string.forgot_password))
+                    }
                 }
             }
         }
@@ -113,7 +117,7 @@ fun AccountNumber(
         },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(50.dp, 200.dp, 50.dp, 0.dp)
+            .padding(50.dp, 150.dp, 50.dp, 0.dp)
             .onFocusChanged { focusState ->
                 val focused = focusState == FocusState.Active
                 emailState.onFocusChange(focused)

@@ -12,6 +12,8 @@ import androidx.paging.ExperimentalPagingApi
 import com.example.composedemo.R
 import com.example.composedemo.bean.ArticleBean
 import com.example.composedemo.common.article.ArticlePage
+import com.example.composedemo.ui.MainDestinations.ARTICLE_LIST_ID
+import com.example.composedemo.ui.MainDestinations.ARTICLE_LIST_TITLE
 import com.example.composedemo.ui.MainDestinations.ARTICLE_ROUTE_URL
 import com.example.composedemo.util.getHtmlText
 import com.example.composedemo.viewmodel.MyViewModel
@@ -24,8 +26,15 @@ object MainDestinations {
     const val ARTICLE_ROUTE_URL = "article_route_url"
     const val SETTING_PAGE = "setting_page"
     const val LOGIN_PAGE = "login_page"
-    const val SCORE_RANK_LIST_PAGE = "Score_Rank_List_Page"
-}
+    const val MYSCORE_PAGE = "myscore_page"
+    const val ARTICLE_LIST = "article_list"
+    const val ARTICLE_LIST_ID = "article_list_id"
+    const val ARTICLE_LIST_TITLE = "article_list_title"
+    const val SCORE_RANK_LIST = "score_rank_list"
+    const val MY_COLLECT_PAGE = "my_collect_page"
+    const val OPEN_SOURCE_PAGE = "open_source_page"
+    const val SEARCH_PAGE = "search_page"
+ }
 
 @ExperimentalFoundationApi
 @ExperimentalPagingApi
@@ -66,10 +75,42 @@ fun NavGraph(
             SettingPage(modifier, actions, myViewModel)
         }
         composable(MainDestinations.LOGIN_PAGE) {
+            myViewModel.showLoging.postValue(true)
             LoginPage(modifier, actions, myViewModel)
         }
-        composable(MainDestinations.SCORE_RANK_LIST_PAGE) {
+        composable(MainDestinations.MYSCORE_PAGE) {
+            MyScorePage(modifier, actions, myViewModel)
+        }
+        composable(
+            "${MainDestinations.ARTICLE_LIST}/{$ARTICLE_LIST_ID}/{$ARTICLE_LIST_TITLE}",
+            arguments = listOf(navArgument(ARTICLE_LIST_ID) {
+                type = NavType.StringType
+            }, navArgument(ARTICLE_LIST_TITLE) {
+                type = NavType.StringType
+            })
+        ) { backStackEntry ->
+            val arguments = requireNotNull(backStackEntry.arguments)
+            val id = arguments.getString(ARTICLE_LIST_ID) ?: ""
+            val title = arguments.getString(ARTICLE_LIST_TITLE) ?: ""
+            ArticleListPage(
+                modifier = modifier,
+                id = id,
+                title = title,
+                actions = actions,
+                myViewModel = myViewModel
+            )
+        }
+        composable(MainDestinations.SCORE_RANK_LIST){
             ScoreRankListPage(modifier, actions, myViewModel)
+        }
+        composable(MainDestinations.MY_COLLECT_PAGE) {
+            MyCollectPage(modifier, actions, myViewModel)
+        }
+        composable(MainDestinations.OPEN_SOURCE_PAGE) {
+            OpenSourcePage(modifier, actions, myViewModel)
+        }
+        composable(MainDestinations.SEARCH_PAGE) {
+            SearchPage(modifier, actions, myViewModel)
         }
     }
 }
@@ -99,8 +140,23 @@ class MainActions(navController: NavHostController) {
         navController.navigateUp()
         jumpLogin()
     }
+    val jumpMyScorePage: () -> Unit = {
+        navigate(navController, MainDestinations.MYSCORE_PAGE)
+    }
+    val jumpArticleList: (id: String, title: String) -> Unit = { id, title ->
+        navigate(navController, "${MainDestinations.ARTICLE_LIST}/$id/$title")
+    }
     val jumpScoreRankListPage: () -> Unit = {
-        navigate(navController, MainDestinations.SCORE_RANK_LIST_PAGE)
+        navigate(navController, MainDestinations.SCORE_RANK_LIST)
+    }
+    val jumpMyCollectPage: () -> Unit = {
+        navigate(navController, MainDestinations.MY_COLLECT_PAGE)
+    }
+    val jumpOpenSourcePage: () -> Unit = {
+        navigate(navController, MainDestinations.OPEN_SOURCE_PAGE)
+    }
+    val jumpSearchPage: () -> Unit = {
+        navigate(navController, MainDestinations.SEARCH_PAGE)
     }
 
     private fun navigate(navController: NavHostController, route: String) {

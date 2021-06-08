@@ -15,6 +15,10 @@ class Repository : BaseRepository() {
         RequestService.instance.listArticle(page)
     }
 
+    suspend fun listArticle(page: Int, id: String): BaseData<ArticleListRes> = request {
+        RequestService.instance.listArticle(page, id)
+    }
+
     suspend fun unCollect(id: String): BaseData<Any> = request {
         RequestService.instance.unCollect(id)
     }
@@ -55,8 +59,17 @@ class Repository : BaseRepository() {
     }
 
     suspend fun login(username: String, password: String): BaseData<UserInfo> = request {
-        RequestService.instance.login(username,password)
+        RequestService.instance.login(username, password)
     }
+
+    suspend fun register(
+        username: String,
+        password: String,
+        repassword: String
+    ): BaseData<UserInfo> = request {
+        RequestService.instance.register(username, password, repassword)
+    }
+
 
     suspend fun logout(): BaseData<Any> = request {
         RequestService.instance.logout()
@@ -65,5 +78,30 @@ class Repository : BaseRepository() {
     suspend fun listIntegral(page: Int): BaseData<RankListRes> = request {
         RequestService.instance.listIntegral(page)
     }
+
+    suspend fun listTrees(): BaseData<List<TreeListRes>> = request {
+        RequestService.instance.listTrees()
+    }
+
+    suspend fun listNavis(): BaseData<List<TreeListRes>> = request {
+        RequestService.instance.listNavis()
+    }
+
+    suspend fun listScoreRank(page: Int): BaseData<RankListRes> = request {
+        RequestService.instance.listScoreRank(page)
+    }
+
+    suspend fun listMyCollect(page: Int): BaseData<ArticleListRes> = request {
+        RequestService.instance.listMyCollect(page)
+    }
+
+    suspend fun searchHotkey(hotkey: String): BaseData<MutableList<SearchHotkeyBean>> = request {
+        RequestService.instance.searchHotkey(hotkey)
+    }
+
+    suspend fun searchArticle(page: Int, k: String): BaseData<ArticleListRes> = request {
+        RequestService.instance.searchArticle(page, k)
+    }
+
 
 }

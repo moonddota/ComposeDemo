@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -21,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.composedemo.R
 import com.example.composedemo.bean.ArticleBean
-import com.example.composedemo.util.toastResource
 import com.example.composedemo.viewmodel.MyViewModel
 import java.lang.String
 
@@ -30,7 +30,7 @@ import java.lang.String
 @Composable
 fun ArticleListPaging(
     actions: MainActions,
-    list:  MutableList<ArticleBean>?,
+    list: MutableList<ArticleBean>?,
     myViewModel: MyViewModel
 ) {
     Log.e("size", " size     ${list?.size}")
@@ -38,44 +38,47 @@ fun ArticleListPaging(
         modifier = Modifier.fillMaxWidth(),
         contentPadding = PaddingValues(5.dp),
     ) {
-        items(count = 1) { article ->
-            list?.forEach { item ->
-                Row(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .fillMaxWidth()
-                        .border(1.dp, Color.Blue, RoundedCornerShape(4.dp))
-                        .background(color = Color.White, shape = RoundedCornerShape(8.dp))
-                        .padding(8.dp)
-                        .clickable { actions.enterArticle(item) },
-                ) {
-                    var proportion = 3f
-                    if (item.envelopePic.isNullOrEmpty()) {
-                        proportion = 1f
-                    } else {
-                        LoadImage(
-                            url = item.envelopePic ?: "",
-                            contentDescription = "LoadImage",
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .weight(1f)
-                                .height(100.dp)
-                        )
-                    }
-                    homeList(
-                        Modifier.weight(proportion),
-                        item
+        itemsIndexed(list?: mutableListOf()){index, item ->
+            Row(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth()
+                    .border(1.dp, Color.Blue, RoundedCornerShape(4.dp))
+                    .background(color = Color.White, shape = RoundedCornerShape(8.dp))
+                    .padding(8.dp)
+                    .clickable { actions.enterArticle(item) },
+            ) {
+                var proportion = 3f
+                if (item.envelopePic.isNullOrEmpty()) {
+                    proportion = 1f
+                } else {
+                    LoadImage(
+                        url = item.envelopePic ?: "",
+                        contentDescription = "LoadImage",
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .weight(1f)
+                            .height(100.dp)
                     )
                 }
-                Spacer(modifier = Modifier.height(5.dp))
+                homeList(
+                    Modifier.weight(proportion),
+                    item,
+                    myViewModel
+                )
             }
+            Spacer(modifier = Modifier.height(5.dp))
         }
     }
 }
 
 
 @Composable
-fun homeList(modifier: Modifier, item: ArticleBean) {
+fun homeList(
+    modifier: Modifier,
+    item: ArticleBean,
+    myViewModel: MyViewModel
+) {
     Column(modifier = modifier) {
         Row {
             Title( //文字部分
@@ -113,7 +116,8 @@ fun homeList(modifier: Modifier, item: ArticleBean) {
             )
             FollowBtn( //按钮
                 Modifier.align(Alignment.CenterVertically),
-                item
+                item,
+                myViewModel
             )
         }
 
@@ -152,16 +156,25 @@ fun Title(modifier: Modifier, item: ArticleBean) {
 }
 
 @Composable
-fun FollowBtn(modifier: Modifier, item: ArticleBean) {
+fun FollowBtn(
+    modifier: Modifier,
+    item: ArticleBean,
+    myViewModel: MyViewModel
+) {
     var favoriteIcon by remember { mutableStateOf(if (item.collect == false) Icons.Filled.FavoriteBorder else Icons.Filled.Favorite) }
     IconButton(modifier = modifier, onClick = {
-        favoriteIcon = if (favoriteIcon == Icons.Filled.Favorite) {
-            toastResource(R.string.collection_cancelled_successfully)
-            Icons.Filled.FavoriteBorder
-        } else {
-            toastResource(R.string.collection_successful)
-            Icons.Filled.Favorite
-        }
+        if (favoriteIcon == Icons.Filled.Favorite)
+            myViewModel.launch(null, {}, {
+                myViewModel.repository.cancelCollects(item.id ?: "")
+            }, {
+                favoriteIcon = Icons.Filled.FavoriteBorder
+            })
+        else
+            myViewModel.launch(null, {}, {
+                myViewModel.repository.toCollects(item.id ?: "")
+            }, {
+                favoriteIcon = Icons.Filled.Favorite
+            })
     }) {
         Icon(
             imageVector = favoriteIcon,

@@ -3,6 +3,8 @@ package com.example.composedemo.network.api
 import com.example.composedemo.bean.*
 import com.example.composedemo.network.BaseData
 import com.example.composedemo.network.RetrofitImpl
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 
 class RequestService {
@@ -84,7 +86,13 @@ class RequestService {
         password: String,
         repassword: String
     ): BaseData<UserInfo> =
-        requestService.register(username, password,repassword)
+        requestService.register(username, password, repassword)
 
+    suspend fun searchHotkey(hotkey: String): BaseData<MutableList<SearchHotkeyBean>> =
+        requestService.searchHotkey(hotkey)
+
+
+    suspend fun searchArticle(page: Int, k: String): BaseData<ArticleListRes> =
+        requestService.searchArticle(page, k)
 
 }

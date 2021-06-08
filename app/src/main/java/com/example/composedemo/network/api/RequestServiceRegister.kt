@@ -1,4 +1,5 @@
 package com.example.composedemo.network.api
+
 import com.example.composedemo.bean.*
 import com.example.composedemo.network.BaseData
 import retrofit2.http.*
@@ -164,5 +165,14 @@ interface RequestServiceRegister {
         @Field("repassword") repassword: String
     ): BaseData<UserInfo>
 
+    @GET("https://www.wanandroid.com//{hotkey}/json")
+    suspend fun searchHotkey(@Path("hotkey") hotkey: String): BaseData<MutableList<SearchHotkeyBean>>
+
+
+    @POST("article/query/{page}/json")
+    suspend fun searchArticle(
+        @Path("page") page: Int,
+        @Query("k") k: String,
+    ): BaseData<ArticleListRes>
 
 }

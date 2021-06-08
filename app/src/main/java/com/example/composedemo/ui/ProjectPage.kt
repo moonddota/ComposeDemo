@@ -4,19 +4,26 @@ import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.composedemo.R
 import com.example.composedemo.bean.ProjectListRes
+import com.example.composedemo.common.PlayAppBar
 import com.example.composedemo.common.SwipeToRefreshAndLoadLayout
 import com.example.composedemo.common.lce.SetLcePage
 import com.example.composedemo.model.PlayLoading
@@ -30,7 +37,8 @@ fun ProjectPage(actions: MainActions, modifier: Modifier, myViewModel: MyViewMod
     val projectTables by myViewModel.projectTabs.observeAsState(PlayLoading)
     val projectList by myViewModel.projectsListData.observeAsState()
     var position by remember { mutableStateOf(0) }
-    var id by remember { mutableStateOf("") }
+    var itemPair by remember { mutableStateOf(Pair("", "")) }
+    var isShowContent by remember { mutableStateOf(true) }
     var refreshingState by remember { mutableStateOf(false) }
 
     if (!loadArticleState) {
@@ -41,7 +49,7 @@ fun ProjectPage(actions: MainActions, modifier: Modifier, myViewModel: MyViewMod
     val tables = mutableListOf<ProjectListRes>()
     if (projectTables is PlaySuccess<*>) {
         tables.addAll((projectTables as PlaySuccess<List<ProjectListRes>>).data)
-        if (tables.isNotEmpty()) id = tables[0].id ?: ""
+        if (tables.isNotEmpty()) itemPair = Pair(tables[0].name ?: "", tables[0].id ?: "")
     }
 
     SetLcePage(playState = projectTables,
@@ -50,50 +58,58 @@ fun ProjectPage(actions: MainActions, modifier: Modifier, myViewModel: MyViewMod
         }
     ) {
         Column(modifier = modifier) {
-            StatusBarHeight()
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(color = colorResource(id = R.color.main_text)),
-                contentPadding = PaddingValues(5.dp),
-            ) {
-                items(count = 1) {
-                    tables?.forEachIndexed { index, table ->
+            PlayAppBar(title = itemPair.first, click = { actions.upPress() },
+                showRight = true,
+                rightImg = painterResource(id = R.mipmap.ic_up_down),
+                rightClick = { isShowContent = !isShowContent })
+            if (isShowContent) {
+                SwipeToRefreshAndLoadLayout(
+                    refreshingState = refreshingState,
+                    loadState = refreshingState,
+                    onRefresh = {
+                        refreshingState = true
+                        myViewModel.getListProjects(itemPair.second, false)
+                    },
+                    onLoad = {
+                        refreshingState = true
+                        myViewModel.getListProjects(itemPair.second, true)
+                    }
+                ) {
+                    Log.e(
+                        "size",
+                        " size     ${(projectList ?: mutableListOf()).size}   id   ${itemPair.second}"
+                    )
+                    ArticleListPaging(actions, projectList ?: mutableListOf(), myViewModel)
+                    refreshingState = false
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(color = colorResource(id = R.color.main_text)),
+                    contentPadding = PaddingValues(5.dp),
+                ) {
+                    itemsIndexed(tables) { index, table ->
                         Text(
                             text = table.name ?: "",
                             color = if (position == index) Color.White else Color.Black,
                             textAlign = TextAlign.Center,
-                            fontSize = 16.sp,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
                             modifier = Modifier
-                                .padding(8.dp)
+                                .padding(16.dp)
+                                .fillMaxWidth()
                                 .clickable {
-                                    if (position == index) return@clickable
-                                    position = index
-                                    id = tables[position].id ?: ""
-                                    refreshingState = true
-                                    myViewModel.getListProjects(id, false)
+                                    if (position != index) {
+                                        position = index
+                                        itemPair = Pair(itemPair.first, tables[position].id ?: "")
+                                        refreshingState = true
+                                        myViewModel.getListProjects(itemPair.second, false)
+                                    }
+                                    isShowContent = true
                                 })
                     }
                 }
-            }
-            SwipeToRefreshAndLoadLayout(
-                refreshingState = refreshingState,
-                loadState = refreshingState,
-                onRefresh = {
-                    refreshingState = true
-                    myViewModel.getListProjects(id, false)
-                },
-                onLoad = {
-                    refreshingState = true
-                    myViewModel.getListProjects(id, true)
-                }
-            ) {
-                Log.e(
-                    "size",
-                    " size     ${(projectList ?: mutableListOf()).size}   id   ${id}"
-                )
-                ArticleListPaging(actions, projectList ?: mutableListOf(), myViewModel)
-                refreshingState = false
             }
         }
     }

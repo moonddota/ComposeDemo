@@ -1,9 +1,13 @@
 package com.example.composedemo.ui
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -11,101 +15,141 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.composedemo.R
-import com.example.composedemo.bean.ArticleBean
-import com.example.composedemo.bean.BannerRes
 import com.example.composedemo.bean.RankBean
 import com.example.composedemo.common.PlayAppBar
-import com.example.composedemo.common.lce.SetLcePage
-import com.example.composedemo.constant.C
-import com.example.composedemo.model.PlayLoading
-import com.example.composedemo.model.PlaySuccess
+import com.example.composedemo.common.SwipeToRefreshAndLoadLayout
 import com.example.composedemo.util.MMkvHelper
 import com.example.composedemo.viewmodel.MyViewModel
 
 @ExperimentalFoundationApi
 @Composable
 fun ScoreRankListPage(modifier: Modifier, actions: MainActions, myViewModel: MyViewModel) {
-
-    val coinCount: String = MMkvHelper.getInstance().userInfo?.coinCount ?: "0"
-
-    Scaffold(
-        modifier = modifier,
-        topBar = {
-            PlayAppBar(
-                title = "我的积分", click = { actions.upPress() },
-                showRight = true,
-                rightImg = painterResource(id = R.mipmap.ic_question),
-                rightClick = {
-                    actions.enterArticle(
-                        ArticleBean(
-                            title = "本站积分规则",
-                            link = C.INTERGRAL_URL
-                        )
-                    )
-                }
-            )
-        },
-        content = {
-            Column {
-                Spacer(modifier = Modifier.height(80.dp))
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = coinCount,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.h3,
-                    fontStyle = FontStyle.Italic,
-                    fontWeight = FontWeight.Bold,
-                    color = colorResource(id = R.color.main_text)
-                )
-                Spacer(modifier = Modifier.height(5.dp))
-                Text(
-                    text = "我的积分",
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center,
-                    fontSize = 20.sp,
-                    fontStyle = FontStyle.Italic,
-                    color = colorResource(id = R.color.black)
-                )
-                Spacer(modifier = Modifier.height(80.dp))
-                ScoreRankListPageContent(myViewModel)
-            }
-        }
-    )
-}
-
-@Composable
-fun ScoreRankListPageContent(myViewModel: MyViewModel) {
     var loadArticleState by remember { mutableStateOf(false) }
-    val data by myViewModel.listIntegralData.observeAsState(PlayLoading)
+    val listScore by myViewModel.listScore.observeAsState()
 
     if (!loadArticleState) {
         loadArticleState = true
-        myViewModel.listIntegral(false)
+        myViewModel.listScoreRank(false)
     }
 
-    SetLcePage(playState = data,
-        onErrorClick = {
-            myViewModel.listIntegral(false)
-        }
-    ) {
-        val list = (data as PlaySuccess<MutableList<RankBean>>).data
-        Column {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(15.dp)
-            ) {
-                Image(painter = painterResource(id = R.mipmap.ic_my_score), contentDescription = "")
-                Spacer(modifier = Modifier.width(10.dp))
-                Text(text = "积分记录", color = Color.Black, fontSize = 18.sp)
+    Column(modifier = modifier) {
+        PlayAppBar(title = "积分排行榜", click = { actions.upPress() })
+        ScoreRankList(Modifier.weight(1f), myViewModel, listScore ?: mutableListOf())
+        val userInfo = MMkvHelper.getInstance().userInfo
+        ScoreRankItem(
+            getRank(userInfo?.rank ?: ""),
+            userInfo.username ?: "",
+            userInfo.coinCount ?: ""
+        )
+    }
+}
+
+@Composable
+private fun ScoreRankList(
+    modifier: Modifier,
+    myViewModel: MyViewModel,
+    listScore: MutableList<RankBean>
+) {
+    var refreshingState by remember { mutableStateOf(false) }
+    Column(modifier) {
+        SwipeToRefreshAndLoadLayout(
+            refreshingState = refreshingState,
+            loadState = refreshingState,
+            onRefresh = {
+                myViewModel.listScoreRank(false)
+                refreshingState = true
+            },
+            onLoad = {
+                myViewModel.listScoreRank(true)
+                refreshingState = true
             }
+        ) {
+            LazyColumn {
+                items(listScore) { item ->
+                    ScoreRankItem(
+                        getRank(item.rank ?: ""),
+                        item.username ?: "",
+                        (item.coinCount ?: "").toString()
+                    )
+                }
+            }
+            Log.e("tag", "${listScore?.size ?: 0}")
+            refreshingState = false
         }
-
     }
+}
 
+
+@Composable
+private fun ScoreRankItem(
+    rankTriple: Triple<String, Boolean, Int>,
+    name: String,
+    count: String
+) {
+    Spacer(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(1.dp)
+            .background(color = colorResource(id = R.color.main_text))
+    )
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        if (rankTriple.second)
+            Image(
+                modifier = Modifier
+                    .width(55.dp)
+                    .padding(5.dp, 0.dp),
+                painter = painterResource(id = rankTriple.third),
+                contentDescription = ""
+            )
+        else
+            Text(
+                text = rankTriple.first,
+                modifier = Modifier.width(55.dp),
+                textAlign = TextAlign.Center,
+                fontSize = 16.sp,
+                color = Color.Black
+            )
+        Spacer(modifier = Modifier.width(20.dp))
+        Text(
+            text = name ?: "",
+            fontSize = 18.sp,
+            color = Color.Black,
+            modifier = Modifier.weight(1f)
+        )
+        Text(
+            text = count ?: "",
+            fontSize = 18.sp,
+            color = colorResource(id = R.color.main_text)
+        )
+    }
+}
+
+
+private fun getRank(rank: String): Triple<String, Boolean, Int> {
+    var isShowIm = false
+    var im = 0
+    when (rank) {
+        "1" -> {
+            isShowIm = true
+            im = R.mipmap.gold_crown
+        }
+        "2" -> {
+            isShowIm = true
+            im = R.mipmap.silver_crown
+        }
+        "3" -> {
+            isShowIm = true
+            im = R.mipmap.cooper_crown
+        }
+    }
+    return Triple(rank, isShowIm, im)
 }
