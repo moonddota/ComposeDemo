@@ -38,6 +38,7 @@ fun RegisterPage(modifier: Modifier, actions: MainActions, myViewModel: MyViewMo
         topBar = {
             PlayAppBar(
                 title = stringResource(id = R.string.sign_register),
+                showBack = false,
                 click = { myViewModel.showLoging.postValue(true) })
         },
         content = {

@@ -1,5 +1,6 @@
 package com.example.composedemo.ui
 
+import android.content.res.loader.ResourcesLoader
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -52,13 +53,16 @@ fun ProjectPage(actions: MainActions, modifier: Modifier, myViewModel: MyViewMod
         if (tables.isNotEmpty()) itemPair = Pair(tables[0].name ?: "", tables[0].id ?: "")
     }
 
+
     SetLcePage(playState = projectTables,
         onErrorClick = {
             myViewModel.getProjectTabs()
         }
     ) {
         Column(modifier = modifier) {
-            PlayAppBar(title = itemPair.first, click = { actions.upPress() },
+            PlayAppBar(title = itemPair.first,
+                showBack = false,
+                click = { actions.upPress() },
                 showRight = true,
                 rightImg = painterResource(id = R.mipmap.ic_up_down),
                 rightClick = { isShowContent = !isShowContent })
@@ -102,7 +106,8 @@ fun ProjectPage(actions: MainActions, modifier: Modifier, myViewModel: MyViewMod
                                 .clickable {
                                     if (position != index) {
                                         position = index
-                                        itemPair = Pair(itemPair.first, tables[position].id ?: "")
+                                        itemPair =
+                                            Pair(itemPair.first, tables[position].id ?: "")
                                         refreshingState = true
                                         myViewModel.getListProjects(itemPair.second, false)
                                     }
@@ -113,6 +118,11 @@ fun ProjectPage(actions: MainActions, modifier: Modifier, myViewModel: MyViewMod
             }
         }
     }
+}
+
+@Composable
+fun aaa() {
+
 }
 
 

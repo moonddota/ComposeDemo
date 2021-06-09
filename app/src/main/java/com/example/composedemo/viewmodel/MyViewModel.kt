@@ -4,26 +4,17 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
 import androidx.paging.*
 import com.example.composedemo.bean.*
 import com.example.composedemo.model.PlayError
 import com.example.composedemo.model.PlayState
 import com.example.composedemo.model.PlaySuccess
-import com.example.composedemo.network.BaseData
 import com.example.composedemo.network.api.RequestService
 import com.example.composedemo.repository.Repository
 import com.example.composedemo.ui.CourseTabs
 import com.example.composedemo.ui.MainActions
 import com.example.composedemo.util.CacheUtil
 import com.example.composedemo.util.MMkvHelper
-import com.example.composedemo.util.ResourceUtil
-import com.example.composedemo.util.toast
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MyViewModel : BaseViewModel() {
     val repository by lazy { Repository() }
@@ -69,27 +60,29 @@ class MyViewModel : BaseViewModel() {
     }
 
     val projectTabs = MutableLiveData<PlayState>(PlaySuccess(listOf<ProjectListRes>()))
-    fun getProjectTabs() = launchUI {
-        val listRes = repository.listProjectsTab()
-        if (listRes.data?.isNullOrEmpty() == false) {
-            projectTabs.postValue(PlaySuccess(listRes.data))
-            getListProjects(listRes.data!![0].id ?: "", false)
-        } else {
-            projectTabs.postValue(PlayError(Throwable("数据到头了")))
+    fun getProjectTabs() = launchUI(projectTabs) {
+        var projectTabs: List<ProjectListRes> =
+            MMkvHelper.getInstance().getProjectTabs(ProjectListRes::class.java)
+        if (projectTabs.isNullOrEmpty()) {
+            val listRes = repository.listProjectsTab()
+            if (listRes.data?.isNullOrEmpty() == false)
+                MMkvHelper.getInstance().saveProjectTabs(listRes.data)
+            projectTabs = listRes.data ?: listOf()
         }
+        if (projectTabs.isNullOrEmpty() == false)
+            getListProjects(projectTabs[0].id ?: "", false)
+        PlaySuccess(projectTabs)
     }
 
     val projectsListData = MutableLiveData(mutableListOf<ArticleBean>())
     private var listProjectsPage = 0
     private val projectsList by lazy { mutableListOf<ArticleBean>() }
-    fun getListProjects(id: String, isLoadMore: Boolean) = launchUI {
+    fun getListProjects(id: String, isLoadMore: Boolean) = launchUI(projectsListData) {
         listProjectsPage = if (isLoadMore) ++listProjectsPage else 0
         val res = repository.getListProjects(listProjectsPage, id)
-        if (!isLoadMore) projectsList.clear()
-        projectsList.addAll(res.data?.datas ?: mutableListOf())
-        if (projectsList.size >= res.data?.total ?: 0) {
-        } else {
-            projectsListData.postValue(projectsList)
+        projectsList.apply {
+            if (!isLoadMore) clear()
+            addAll(res.data?.datas ?: mutableListOf())
         }
     }
 
@@ -118,12 +111,12 @@ class MyViewModel : BaseViewModel() {
         MMkvHelper.getInstance().saveUserInfo(res.data)
         userInfo.postValue(res.data)
     }, {
-
+        actions.upPress()
     })
 
     fun register(actions: MainActions, username: String, password: String, repassword: String) =
         launch(null, {}, {
-            val res = repository.register(username, password,repassword)
+            val res = repository.register(username, password, repassword)
             MMkvHelper.getInstance().saveUserInfo(res.data)
             userInfo.postValue(res.data)
         }, {
@@ -161,7 +154,6 @@ class MyViewModel : BaseViewModel() {
     fun changeSquarePagePosition(index: Int) {
         squarePagePosition.value = index
     }
-
 
     val SquareTrees = MutableLiveData<List<TreeListRes>>()
     fun listTrees() = launchUI(SquareTrees) {

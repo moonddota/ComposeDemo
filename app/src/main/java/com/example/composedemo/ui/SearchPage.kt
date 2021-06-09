@@ -46,7 +46,7 @@ fun SearchPage(modifier: Modifier, actions: MainActions, myViewModel: MyViewMode
             if (searchState.text.isBlank() || !clickSearchState) {
                 NoContent()
             } else {
-                ArticleListPaging(actions,searchList,myViewModel)
+                ArticleListPaging(actions,searchList?: mutableListOf(),myViewModel)
             }
         }
     )

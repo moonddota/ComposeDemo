@@ -1,7 +1,6 @@
 package com.example.composedemo
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -16,7 +15,6 @@ import com.example.composedemo.ui.theme.ComposeDemoTheme
 import com.example.composedemo.util.FileUtils.checkDeviceHasNavigationBar
 import com.example.composedemo.util.asColor
 import com.example.composedemo.util.px2dp
-import java.io.File
 
 class MainActivity : ComponentActivity() {
     @ExperimentalPagingApi
