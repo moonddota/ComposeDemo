@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.example.composedemo.R
 import com.example.composedemo.bean.ArticleBean
-import com.example.composedemo.common.PlayAppBar
+import com.example.composedemo.common.topBar
 import com.example.composedemo.common.SwipeToRefreshAndLoadLayout
 import com.example.composedemo.common.lce.SetLcePage
 import com.example.composedemo.model.PlayLoading
@@ -29,7 +29,7 @@ fun MyCollectPage(modifier: Modifier, actions: MainActions, myViewModel: MyViewM
     }
 
     Column(modifier = modifier) {
-        PlayAppBar(
+        topBar(
             title = stringResource(id = R.string.mine_collect),
             click = { actions.upPress() })
         SetLcePage(playState = MyCollectList,

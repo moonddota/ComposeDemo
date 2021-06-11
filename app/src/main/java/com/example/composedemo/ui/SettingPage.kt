@@ -13,7 +13,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.blankj.utilcode.util.AppUtils
 import com.example.composedemo.R
-import com.example.composedemo.common.PlayAppBar
+import com.example.composedemo.common.topBar
 import com.example.composedemo.util.getHtmlText
 import com.example.composedemo.util.toast
 import com.example.composedemo.viewmodel.MyViewModel
@@ -34,7 +34,7 @@ fun SettingPage(modifier: Modifier, actions: MainActions, myViewModel: MyViewMod
     Scaffold(
         modifier = modifier,
         topBar = {
-            PlayAppBar(getHtmlText("设置"), click = {
+            topBar(getHtmlText("设置"), click = {
                 actions.upPress()
             })
         },

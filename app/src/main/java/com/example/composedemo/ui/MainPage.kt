@@ -26,18 +26,20 @@ import com.example.composedemo.util.toast
 import com.example.composedemo.viewmodel.MyViewModel
 import java.lang.String
 
+private var userInfoData :UserInfo ?= null
+
 @ExperimentalFoundationApi
 @Composable
 fun MainPage(actions: MainActions, modifier: Modifier, myViewModel: MyViewModel) {
-    var loadArticleState by remember { mutableStateOf(false) }
-    val userInfo by myViewModel.userInfo.observeAsState()
+     val userInfo by myViewModel.userInfo.observeAsState()
 
-    if (!loadArticleState) {
-        loadArticleState = true
-        myViewModel.getIntegral()
-    }
+      userInfoData = userInfo
+      if (userInfoData == null){
+          myViewModel.getIntegral()
+      }
+
     Column() {
-        MainPageTop(actions, myViewModel, modifier, userInfo)
+        MainPageTop(actions, myViewModel, modifier, userInfoData)
         MainPageContents(actions, userInfo)
     }
 }
@@ -137,30 +139,27 @@ fun MainPageContents(actions: MainActions, userInfo: UserInfo?) {
         R.mipmap.ic_mine1,
         stringResource(id = R.string.mine_integral),
         String.format("当前积分" + ": %s", userInfo?.coinCount ?: "")
-    ) { checkLogin { actions.jumpMyScorePage() } }
+    ) {
+        checkLogin { actions.jumpMyScorePage() }
+    }
+    MainPageCountent(R.mipmap.ic_mine2, stringResource(id = R.string.mine_collect), "") {
+        checkLogin { actions.jumpMyCollectPage() }
+    }
     MainPageCountent(
-        R.mipmap.ic_mine2,
-        stringResource(id = R.string.mine_collect),
-        ""
-    ) { checkLogin { actions.jumpMyCollectPage() } }
-    MainPageCountent(
-        R.mipmap.ic_mine3,
-        "我的分享",
-        ""
+        R.mipmap.ic_mine3, "我的分享", ""
     ) {
         toast("我的分享")
     }
     MainPageCountent(
-        R.mipmap.ic_mine4,
-        stringResource(id = R.string.mine_open_source_project),
-        ""
-    ) { actions.jumpOpenSourcePage() }
-    MainPageCountent(
-        R.mipmap.ic_mine5,
-        "关于作者",
-        ""
+        R.mipmap.ic_mine4, stringResource(id = R.string.mine_open_source_project), ""
     ) {
+        actions.jumpOpenSourcePage()
+    }
+    MainPageCountent(R.mipmap.ic_mine5, "关于作者", "") {
         toast("关于作者")
+    }
+    MainPageCountent(R.mipmap.ic_mine5, "draw绘画", "") {
+        actions.jumpDrawPageL()
     }
 }
 
@@ -189,7 +188,7 @@ fun MainPageCountent(im: Int?, title: kotlin.String, countent: kotlin.String, on
 }
 
 
-fun checkLogin(function: () -> Unit) {
+private fun checkLogin(function: () -> Unit) {
     val userInfo = MMkvHelper.getInstance().userInfo
     if (userInfo == null) {
         toast("清先登录")

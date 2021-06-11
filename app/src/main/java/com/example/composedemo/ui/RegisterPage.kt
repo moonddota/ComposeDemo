@@ -7,7 +7,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -16,15 +15,13 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.composedemo.R
-import com.example.composedemo.common.PlayAppBar
+import com.example.composedemo.common.topBar
 import com.example.composedemo.common.signin.EmailState
 import com.example.composedemo.common.signin.PasswordState
 import com.example.composedemo.common.signin.TextFieldState
@@ -36,7 +33,7 @@ fun RegisterPage(modifier: Modifier, actions: MainActions, myViewModel: MyViewMo
     Scaffold(
         modifier = modifier,
         topBar = {
-            PlayAppBar(
+            topBar(
                 title = stringResource(id = R.string.sign_register),
                 showBack = false,
                 click = { myViewModel.showLoging.postValue(true) })

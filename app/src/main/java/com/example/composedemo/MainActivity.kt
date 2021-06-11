@@ -17,6 +17,7 @@ import com.example.composedemo.util.asColor
 import com.example.composedemo.util.px2dp
 
 class MainActivity : ComponentActivity() {
+
     @ExperimentalPagingApi
     @ExperimentalFoundationApi
     override fun onCreate(savedInstanceState: Bundle?) {

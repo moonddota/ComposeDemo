@@ -21,7 +21,7 @@ import com.example.composedemo.R
 import com.example.composedemo.ui.StatusBarHeight
 
 @Composable
-fun PlayAppBar(
+fun topBar(
     title: String,
     showBack: Boolean = true,
     click: (() -> Unit)? = null,

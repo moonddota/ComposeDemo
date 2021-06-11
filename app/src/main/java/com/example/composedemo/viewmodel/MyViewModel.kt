@@ -2,6 +2,7 @@ package com.example.composedemo.viewmodel
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.util.Pair
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.*
@@ -38,25 +39,10 @@ class MyViewModel : BaseViewModel() {
         _position.value = position
     }
 
-    val homeListData = MutableLiveData<MutableList<ArticleBean>>()
-    private val homeList by lazy { mutableListOf<ArticleBean>() }
-    private var page = 0
-    private var isMore = true
-    fun listArticle(isLoadMore: Boolean) = launchUI() {
-        if (!isMore && isLoadMore) {
-            return@launchUI
-        }
-        page = if (isLoadMore) ++page else 0
-        val listRes = repository.listArticle(page)
-        if (!isLoadMore) homeList.clear()
-        homeList.addAll(listRes.data?.datas ?: mutableListOf())
-        if (homeList.size >= listRes.data?.total ?: 0) {
-            isMore = false
-        } else {
-            homeListData.postValue(homeList)
-            Log.e("tag", "'homeListData  " + homeListData.value?.size)
-            isMore = true
-        }
+    val homeListData = MutableLiveData<Pair<Boolean, MutableList<ArticleBean>>>()
+    fun listArticle(isLoadMore: Boolean, page: Int) = launchUI(homeListData) {
+        val res = repository.listArticle(page)
+        Pair(isLoadMore, res.data?.datas ?: mutableListOf())
     }
 
     val projectTabs = MutableLiveData<PlayState>(PlaySuccess(listOf<ProjectListRes>()))
@@ -70,20 +56,14 @@ class MyViewModel : BaseViewModel() {
             projectTabs = listRes.data ?: listOf()
         }
         if (projectTabs.isNullOrEmpty() == false)
-            getListProjects(projectTabs[0].id ?: "", false)
+            getListProjects(projectTabs[0].id ?: "", 0, false)
         PlaySuccess(projectTabs)
     }
 
-    val projectsListData = MutableLiveData(mutableListOf<ArticleBean>())
-    private var listProjectsPage = 0
-    private val projectsList by lazy { mutableListOf<ArticleBean>() }
-    fun getListProjects(id: String, isLoadMore: Boolean) = launchUI(projectsListData) {
-        listProjectsPage = if (isLoadMore) ++listProjectsPage else 0
-        val res = repository.getListProjects(listProjectsPage, id)
-        projectsList.apply {
-            if (!isLoadMore) clear()
-            addAll(res.data?.datas ?: mutableListOf())
-        }
+    val projectsListData = MutableLiveData<Pair<Boolean, MutableList<ArticleBean>>>()
+    fun getListProjects(id: String, page: Int, isLoadMore: Boolean) = launchUI(projectsListData) {
+        val res = repository.getListProjects(page, id)
+        Pair(isLoadMore, res.data?.datas ?: mutableListOf())
     }
 
     val collectsStatus = MutableLiveData<Boolean>()
@@ -97,18 +77,17 @@ class MyViewModel : BaseViewModel() {
         collectsStatus.postValue(true)
     }
 
-    val userInfo = MutableLiveData<UserInfo>()
-    fun getIntegral() = launchUI() {
+    val userInfo = MutableLiveData<UserInfo?>()
+    fun getIntegral() = launchUI(userInfo) {
         val res = repository.getIntegral()
-        userInfo.postValue(res.data)
         MMkvHelper.getInstance().saveUserInfo(res.data)
+        res.data
     }
 
     val showLoging = MutableLiveData<Boolean>()
 
     fun login(actions: MainActions, username: String, password: String) = launch(null, {}, {
         val res = repository.login(username, password)
-        MMkvHelper.getInstance().saveUserInfo(res.data)
         userInfo.postValue(res.data)
     }, {
         actions.upPress()
@@ -117,7 +96,6 @@ class MyViewModel : BaseViewModel() {
     fun register(actions: MainActions, username: String, password: String, repassword: String) =
         launch(null, {}, {
             val res = repository.register(username, password, repassword)
-            MMkvHelper.getInstance().saveUserInfo(res.data)
             userInfo.postValue(res.data)
         }, {
             actions.upPress()
@@ -142,12 +120,10 @@ class MyViewModel : BaseViewModel() {
         actions.loginOut()
     })
 
-    val listIntegralData = MutableLiveData<PlayState>()
-    private var listIntegralPage = 1
-    fun listIntegral(isMore: Boolean) = launchUI() {
-        listIntegralPage = if (isMore) ++listIntegralPage else 1
-        val res = repository.listIntegral(listIntegralPage)
-        listIntegralData.postValue(PlaySuccess(res.data))
+    val listIntegralData = MutableLiveData<Pair<Boolean, RankListRes?>>()
+    fun listIntegral(isMore: Boolean, page: Int) = launchUI(listIntegralData) {
+        val res = repository.listIntegral(page)
+        Pair(isMore, res.data)
     }
 
     val squarePagePosition = MutableLiveData(0)
@@ -178,17 +154,10 @@ class MyViewModel : BaseViewModel() {
         PlaySuccess(articleLists)
     }
 
-    val listScore = MutableLiveData<MutableList<RankBean>>()
-    private val scoreList by lazy { mutableListOf<RankBean>() }
-    private var scoreListPage = 1
-    fun listScoreRank(isMore: Boolean) = launchUI(listScore) {
-        scoreListPage = if (isMore) ++scoreListPage else 1
-        val list = RequestService.instance.listScoreRank(scoreListPage)
-        scoreList.apply {
-            if (!isMore) scoreList.clear()
-            addAll(list.data?.datas ?: listOf())
-            Log.e("tag", "$isMore    ${scoreList.size}")
-        }
+    val listScore = MutableLiveData<Pair<Boolean, List<RankBean>>>()
+    fun listScoreRank(isMore: Boolean, page: Int) = launchUI(listScore) {
+        val list = RequestService.instance.listScoreRank(page)
+        Pair(isMore, list.data?.datas ?: listOf())
     }
 
     val MyCollectList = MutableLiveData<PlayState>()

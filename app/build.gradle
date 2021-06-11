@@ -133,5 +133,4 @@ dependencies {
 //    api "dev.chrisbanes.accompanist:accompanist-insets:0.6.2"
     api "dev.chrisbanes.accompanist:accompanist-coil:0.6.2"
 
-
 }

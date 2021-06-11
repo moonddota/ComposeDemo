@@ -1,11 +1,13 @@
 package com.example.composedemo.ui
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -22,15 +24,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.blankj.utilcode.util.LogUtils
 import com.example.composedemo.R
 import com.example.composedemo.bean.ArticleBean
 import com.example.composedemo.bean.RankBean
-import com.example.composedemo.bean.RankListRes
-import com.example.composedemo.common.PlayAppBar
-import com.example.composedemo.common.lce.SetLcePage
+import com.example.composedemo.common.SwipeToRefreshAndLoadLayout
+import com.example.composedemo.common.topBar
 import com.example.composedemo.constant.C
-import com.example.composedemo.model.PlayLoading
-import com.example.composedemo.model.PlaySuccess
 import com.example.composedemo.util.MMkvHelper
 import com.example.composedemo.viewmodel.MyViewModel
 import java.text.SimpleDateFormat
@@ -42,10 +42,17 @@ fun MyScorePage(modifier: Modifier, actions: MainActions, myViewModel: MyViewMod
     val simpleDateFormat by lazy { SimpleDateFormat("yyyy-MM-dd HH:mm:ss") }
     val coinCount: String = MMkvHelper.getInstance().userInfo?.coinCount ?: "0"
 
+    val data by myViewModel.listIntegralData.observeAsState()
+    val list by remember { mutableStateOf(mutableListOf<RankBean>()) }
+    if (data != null) {
+        if (data?.first != true) list.clear()
+        list.addAll(data?.second?.datas ?: listOf())
+    }
+
     Scaffold(
         modifier = modifier,
         topBar = {
-            PlayAppBar(
+            topBar(
                 title = stringResource(id = R.string.mine_integral), click = { actions.upPress() },
                 showRight = true,
                 rightImg = painterResource(id = R.mipmap.ic_question),
@@ -92,29 +99,43 @@ fun MyScorePage(modifier: Modifier, actions: MainActions, myViewModel: MyViewMod
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(text = "积分记录", color = Color.Black, fontSize = 18.sp)
                 }
-                ScoreRankListPageContent(myViewModel, simpleDateFormat)
+                ScoreRankListPageContent(list, myViewModel, simpleDateFormat)
             }
         }
     )
 }
 
-@Composable
-fun ScoreRankListPageContent(myViewModel: MyViewModel, simpleDateFormat: SimpleDateFormat) {
-    var loadArticleState by remember { mutableStateOf(false) }
-    val data by myViewModel.listIntegralData.observeAsState(PlayLoading)
 
-    if (!loadArticleState) {
-        loadArticleState = true
-        myViewModel.listIntegral(false)
+@Composable
+fun ScoreRankListPageContent(
+    list: MutableList<RankBean>,
+    myViewModel: MyViewModel,
+    simpleDateFormat: SimpleDateFormat
+) {
+    var refreshingState by remember { mutableStateOf(false) }
+    var page by remember { mutableStateOf(0) }
+
+    if (list.isEmpty()) {
+        page = 0
+        myViewModel.listIntegral(false, page)
     }
 
-    SetLcePage(playState = data,
-        onErrorClick = {
-            myViewModel.listIntegral(false)
+    SwipeToRefreshAndLoadLayout(
+        refreshingState = refreshingState,
+        loadState = refreshingState,
+        onRefresh = {
+            page = 0
+            myViewModel.listIntegral(false, page)
+            refreshingState = true
+        },
+        onLoad = {
+            page += 1
+            myViewModel.listIntegral(true, page)
+            refreshingState = true
         }
     ) {
-        val list = (data as PlaySuccess<RankListRes>).data
-        ScoreRankList(list.datas ?: listOf(), simpleDateFormat)
+        refreshingState = false
+        ScoreRankList(list, simpleDateFormat)
     }
 }
 
@@ -124,7 +145,7 @@ fun ScoreRankList(list: List<RankBean>, simpleDateFormat: SimpleDateFormat) {
         modifier = Modifier.fillMaxWidth(),
         contentPadding = PaddingValues(10.dp),
     ) {
-        items(list) { item ->
+        itemsIndexed(list) { index, item ->
             ScorRankContent(item, simpleDateFormat)
         }
     }

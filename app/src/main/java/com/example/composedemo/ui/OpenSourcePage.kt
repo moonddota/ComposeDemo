@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.composedemo.R
 import com.example.composedemo.bean.ArticleBean
-import com.example.composedemo.common.PlayAppBar
+import com.example.composedemo.common.topBar
 import com.example.composedemo.viewmodel.MyViewModel
 
 
@@ -26,7 +26,7 @@ import com.example.composedemo.viewmodel.MyViewModel
 fun OpenSourcePage(modifier: Modifier, actions: MainActions, myViewModel: MyViewModel) {
 
     Column(modifier = modifier) {
-        PlayAppBar(
+        topBar(
             title = stringResource(id = R.string.mine_open_source_project),
             click = { actions.upPress() })
 

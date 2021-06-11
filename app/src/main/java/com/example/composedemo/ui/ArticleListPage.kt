@@ -7,7 +7,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import com.example.composedemo.bean.ArticleBean
-import com.example.composedemo.common.PlayAppBar
+import com.example.composedemo.common.topBar
 import com.example.composedemo.common.SwipeToRefreshAndLoadLayout
 import com.example.composedemo.common.lce.SetLcePage
 import com.example.composedemo.model.PlayLoading
@@ -34,7 +34,7 @@ fun ArticleListPage(
     }
 
     Column(modifier = modifier) {
-        PlayAppBar(title = title, click = { actions.upPress() })
+        topBar(title = title, click = { actions.upPress() })
         SetLcePage(playState = articleList,
             onErrorClick = { myViewModel.getlistArticle(false, id) }
         ) {

@@ -1,6 +1,5 @@
 package com.example.composedemo.ui
 
-import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -31,51 +30,46 @@ fun ArticleListPaging(
     list: MutableList<ArticleBean>,
     myViewModel: MyViewModel
 ) {
-    Log.e("size", " size     ${list?.size}")
-    LazyColumn(
-        modifier = Modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(5.dp),
-    ) {
-        itemsIndexed(list) { index, item ->
-            Log.e("item", " size     ${list?.size}    index   ${index}")
-            itemContent(item, actions, myViewModel)
+    if (list.isEmpty())
+        NoContent()
+    else
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(5.dp),
+        ) {
+            itemsIndexed(list) { index, item ->
+                Row(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth()
+                        .border(1.dp, Color.Blue, RoundedCornerShape(4.dp))
+                        .background(color = Color.White, shape = RoundedCornerShape(8.dp))
+                        .padding(8.dp)
+                        .clickable { actions.enterArticle(item) },
+                ) {
+                    var proportion = 3f
+                    if (item.envelopePic.isNullOrEmpty()) {
+                        proportion = 1f
+                    } else {
+                        LoadImage(
+                            url = item.envelopePic ?: "",
+                            contentDescription = "LoadImage",
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .weight(1f)
+                                .height(100.dp)
+                        )
+                    }
+                    homeList(
+                        Modifier.weight(proportion),
+                        item,
+                        myViewModel
+                    )
+                }
+                Spacer(modifier = Modifier.height(5.dp))
+            }
         }
-    }
 }
-
-@Composable
-private fun itemContent(item: ArticleBean, actions: MainActions, myViewModel: MyViewModel) {
-    Row(
-        modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth()
-            .border(1.dp, Color.Blue, RoundedCornerShape(4.dp))
-            .background(color = Color.White, shape = RoundedCornerShape(8.dp))
-            .padding(8.dp)
-            .clickable { actions.enterArticle(item) },
-    ) {
-        var proportion = 3f
-        if (item.envelopePic.isNullOrEmpty()) {
-            proportion = 1f
-        } else {
-            LoadImage(
-                url = item.envelopePic ?: "",
-                contentDescription = "LoadImage",
-                modifier = Modifier
-                    .padding(8.dp)
-                    .weight(1f)
-                    .height(100.dp)
-            )
-        }
-        homeList(
-            Modifier.weight(proportion),
-            item,
-            myViewModel
-        )
-    }
-    Spacer(modifier = Modifier.height(5.dp))
-}
-
 
 @Composable
 fun homeList(

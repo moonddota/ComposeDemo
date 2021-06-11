@@ -24,7 +24,7 @@ import com.blankj.utilcode.util.StringUtils
 import com.example.composedemo.R
 import com.example.composedemo.bean.ArticleBean
 import com.example.composedemo.common.BookmarkButton
-import com.example.composedemo.common.PlayAppBar
+import com.example.composedemo.common.topBar
 import com.example.composedemo.util.getHtmlText
 import com.example.composedemo.util.toast
 import com.example.composedemo.util.toastResource
@@ -42,7 +42,7 @@ fun ArticlePage(
     Scaffold(
         modifier = modifier,
         topBar = {
-            PlayAppBar(getHtmlText(article?.title ?: "文章详情"), click = {
+            topBar(getHtmlText(article?.title ?: "文章详情"), click = {
                 if (x5WebView.canGoBack()) {
                     //返回上个页面
                     x5WebView.goBack()

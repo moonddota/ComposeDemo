@@ -8,7 +8,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.FocusState
@@ -24,11 +23,10 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.composedemo.R
-import com.example.composedemo.common.PlayAppBar
+import com.example.composedemo.common.topBar
 import com.example.composedemo.common.signin.EmailState
 import com.example.composedemo.common.signin.PasswordState
 import com.example.composedemo.common.signin.TextFieldState
-import com.example.composedemo.util.getHtmlText
 import com.example.composedemo.util.toast
 import com.example.composedemo.viewmodel.MyViewModel
 
@@ -49,7 +47,7 @@ fun LoginPages(modifier: Modifier, actions: MainActions, myViewModel: MyViewMode
     Scaffold(
         modifier = modifier,
         topBar = {
-            PlayAppBar(
+            topBar(
                 title = stringResource(id = R.string.sign_in),
                 click = { actions.upPress() })
         },

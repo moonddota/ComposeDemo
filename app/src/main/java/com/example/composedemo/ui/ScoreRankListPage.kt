@@ -20,25 +20,32 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.composedemo.R
 import com.example.composedemo.bean.RankBean
-import com.example.composedemo.common.PlayAppBar
 import com.example.composedemo.common.SwipeToRefreshAndLoadLayout
+import com.example.composedemo.common.topBar
 import com.example.composedemo.util.MMkvHelper
 import com.example.composedemo.viewmodel.MyViewModel
+
+private  var page = 1
 
 @ExperimentalFoundationApi
 @Composable
 fun ScoreRankListPage(modifier: Modifier, actions: MainActions, myViewModel: MyViewModel) {
-    var loadArticleState by remember { mutableStateOf(false) }
-    val listScore by myViewModel.listScore.observeAsState()
+    val scoreData by myViewModel.listScore.observeAsState()
+    val list by remember { mutableStateOf(mutableListOf<RankBean>()) }
 
-    if (!loadArticleState) {
-        loadArticleState = true
-        myViewModel.listScoreRank(false)
+    if (scoreData != null) {
+        if (scoreData?.first == false) list.clear()
+        list.addAll(scoreData?.second ?: mutableListOf())
+    }
+
+    if (list.isEmpty()) {
+        page = 1
+        myViewModel.listScoreRank(false,page)
     }
 
     Column(modifier = modifier) {
-        PlayAppBar(title = "积分排行榜", click = { actions.upPress() })
-        ScoreRankList(Modifier.weight(1f), myViewModel, listScore ?: mutableListOf())
+        topBar(title = "积分排行榜", click = { actions.upPress() })
+        ScoreRankList(Modifier.weight(1f), myViewModel,list)
         val userInfo = MMkvHelper.getInstance().userInfo
         ScoreRankItem(
             getRank(userInfo?.rank ?: ""),
@@ -60,11 +67,13 @@ private fun ScoreRankList(
             refreshingState = refreshingState,
             loadState = refreshingState,
             onRefresh = {
-                myViewModel.listScoreRank(false)
+                page = 1
+                myViewModel.listScoreRank(false,page)
                 refreshingState = true
             },
             onLoad = {
-                myViewModel.listScoreRank(true)
+                page += 1
+                myViewModel.listScoreRank(true,page)
                 refreshingState = true
             }
         ) {
@@ -77,9 +86,8 @@ private fun ScoreRankList(
                     )
                 }
             }
-            Log.e("tag", "${listScore?.size ?: 0}")
             refreshingState = false
-        }
+         }
     }
 }
 

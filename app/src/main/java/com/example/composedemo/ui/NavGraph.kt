@@ -34,7 +34,8 @@ object MainDestinations {
     const val MY_COLLECT_PAGE = "my_collect_page"
     const val OPEN_SOURCE_PAGE = "open_source_page"
     const val SEARCH_PAGE = "search_page"
- }
+    const val DRAW_PAGE = "draw_page"
+}
 
 @ExperimentalFoundationApi
 @ExperimentalPagingApi
@@ -100,7 +101,7 @@ fun NavGraph(
                 myViewModel = myViewModel
             )
         }
-        composable(MainDestinations.SCORE_RANK_LIST){
+        composable(MainDestinations.SCORE_RANK_LIST) {
             ScoreRankListPage(modifier, actions, myViewModel)
         }
         composable(MainDestinations.MY_COLLECT_PAGE) {
@@ -111,6 +112,9 @@ fun NavGraph(
         }
         composable(MainDestinations.SEARCH_PAGE) {
             SearchPage(modifier, actions, myViewModel)
+        }
+        composable(MainDestinations.DRAW_PAGE) {
+            DrawPage(modifier, actions, myViewModel)
         }
     }
 }
@@ -157,6 +161,9 @@ class MainActions(navController: NavHostController) {
     }
     val jumpSearchPage: () -> Unit = {
         navigate(navController, MainDestinations.SEARCH_PAGE)
+    }
+    val jumpDrawPageL: () -> Unit = {
+        navigate(navController, MainDestinations.DRAW_PAGE)
     }
 
     private fun navigate(navController: NavHostController, route: String) {
