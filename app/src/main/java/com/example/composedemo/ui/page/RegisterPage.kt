@@ -1,4 +1,4 @@
-package com.example.composedemo.ui
+package com.example.composedemo.ui.page
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,6 +25,7 @@ import com.example.composedemo.common.topBar
 import com.example.composedemo.common.signin.EmailState
 import com.example.composedemo.common.signin.PasswordState
 import com.example.composedemo.common.signin.TextFieldState
+import com.example.composedemo.ui.MainActions
 import com.example.composedemo.viewmodel.MyViewModel
 
 @Composable

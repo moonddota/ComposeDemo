@@ -22,6 +22,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
 import com.example.composedemo.R
+import com.example.composedemo.ui.page.HomePage
+import com.example.composedemo.ui.page.MainPage
+import com.example.composedemo.ui.page.ProjectPage
+import com.example.composedemo.ui.page.SquarePage
 import com.example.composedemo.viewmodel.MyViewModel
 import java.util.*
 

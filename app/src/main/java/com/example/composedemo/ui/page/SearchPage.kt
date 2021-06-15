@@ -1,4 +1,4 @@
-package com.example.composedemo.ui
+package com.example.composedemo.ui.page
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -25,6 +25,9 @@ import androidx.compose.ui.unit.sp
 import com.example.composedemo.R
 import com.example.composedemo.bean.SearchHotkeyBean
 import com.example.composedemo.common.signin.TextFieldState
+import com.example.composedemo.ui.MainActions
+import com.example.composedemo.ui.NoContent
+import com.example.composedemo.ui.widget.StatusBarHeight
 import com.example.composedemo.viewmodel.MyViewModel
 
 @ExperimentalFoundationApi
@@ -36,6 +39,7 @@ fun SearchPage(modifier: Modifier, actions: MainActions, myViewModel: MyViewMode
     val searchList by myViewModel.searchList.observeAsState()
 
     Scaffold(
+        modifier = modifier,
         topBar = {
             SearchPageTop(actions, searchState) {
                 clickSearchState = true

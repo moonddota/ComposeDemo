@@ -1,6 +1,5 @@
-package com.example.composedemo.ui
+package com.example.composedemo.ui.widget
 
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
@@ -15,14 +14,12 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.blankj.utilcode.util.BarUtils
-import com.example.composedemo.App
 import com.example.composedemo.R
+import com.example.composedemo.ui.MainActions
 import com.example.composedemo.util.px2dp
-import java.lang.reflect.Method
 
 @Composable
 fun TopBar(title: String, actions: MainActions) {

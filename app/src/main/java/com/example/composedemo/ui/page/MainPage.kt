@@ -1,4 +1,4 @@
-package com.example.composedemo.ui
+package com.example.composedemo.ui.page
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -21,22 +21,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.composedemo.R
 import com.example.composedemo.bean.UserInfo
+import com.example.composedemo.ui.MainActions
+import com.example.composedemo.ui.widget.StatusBarHeight
 import com.example.composedemo.util.MMkvHelper
 import com.example.composedemo.util.toast
 import com.example.composedemo.viewmodel.MyViewModel
 import java.lang.String
 
-private var userInfoData :UserInfo ?= null
+private var userInfoData: UserInfo? = null
 
 @ExperimentalFoundationApi
 @Composable
 fun MainPage(actions: MainActions, modifier: Modifier, myViewModel: MyViewModel) {
-     val userInfo by myViewModel.userInfo.observeAsState()
+    val userInfo by myViewModel.userInfo.observeAsState()
 
-      userInfoData = userInfo
-      if (userInfoData == null){
-          myViewModel.getIntegral()
-      }
+    userInfoData = userInfo
+    if (userInfoData == null) {
+        myViewModel.getIntegral()
+    }
 
     Column() {
         MainPageTop(actions, myViewModel, modifier, userInfoData)
@@ -145,13 +147,13 @@ fun MainPageContents(actions: MainActions, userInfo: UserInfo?) {
     MainPageCountent(R.mipmap.ic_mine2, stringResource(id = R.string.mine_collect), "") {
         checkLogin { actions.jumpMyCollectPage() }
     }
-    MainPageCountent(
-        R.mipmap.ic_mine3, "我的分享", ""
-    ) {
+    MainPageCountent(R.mipmap.ic_mine3, "我的分享", "") {
         toast("我的分享")
     }
     MainPageCountent(
-        R.mipmap.ic_mine4, stringResource(id = R.string.mine_open_source_project), ""
+        R.mipmap.ic_mine4,
+        stringResource(id = R.string.mine_open_source_project),
+        ""
     ) {
         actions.jumpOpenSourcePage()
     }

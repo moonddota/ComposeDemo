@@ -10,11 +10,6 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import kotlin.math.roundToInt
 
-/**
- * 自定义Layout Row v4.0
- *
- * 带 weight 功能的 Row
- */
 @Composable
 fun MyRowV4(
     modifier: Modifier = Modifier,

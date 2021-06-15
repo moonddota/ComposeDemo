@@ -1,6 +1,5 @@
-package com.example.composedemo.ui
+package com.example.composedemo.ui.page
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,6 +21,7 @@ import com.example.composedemo.R
 import com.example.composedemo.bean.RankBean
 import com.example.composedemo.common.SwipeToRefreshAndLoadLayout
 import com.example.composedemo.common.topBar
+import com.example.composedemo.ui.MainActions
 import com.example.composedemo.util.MMkvHelper
 import com.example.composedemo.viewmodel.MyViewModel
 

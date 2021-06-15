@@ -18,7 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.composedemo.R
-import com.example.composedemo.ui.StatusBarHeight
+import com.example.composedemo.ui.widget.StatusBarHeight
 
 @Composable
 fun topBar(
@@ -26,7 +26,7 @@ fun topBar(
     showBack: Boolean = true,
     click: (() -> Unit)? = null,
     showRight: Boolean = false,
-    rightImg: Painter = painterResource(id = R.mipmap.ic_question) ,
+    rightImg: Painter = painterResource(id = R.mipmap.ic_question),
     rightClick: (() -> Unit)? = null,
 ) {
     Column(modifier = Modifier.background(color = colorResource(id = R.color.main_text))) {

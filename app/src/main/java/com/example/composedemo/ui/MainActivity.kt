@@ -1,4 +1,4 @@
-package com.example.composedemo
+package com.example.composedemo.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.paging.ExperimentalPagingApi
 import com.blankj.utilcode.util.BarUtils
-import com.example.composedemo.ui.NavGraph
+import com.example.composedemo.R
 import com.example.composedemo.ui.theme.ComposeDemoTheme
 import com.example.composedemo.util.FileUtils.checkDeviceHasNavigationBar
 import com.example.composedemo.util.asColor

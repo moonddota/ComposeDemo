@@ -15,6 +15,7 @@ import com.example.composedemo.common.article.ArticlePage
 import com.example.composedemo.ui.MainDestinations.ARTICLE_LIST_ID
 import com.example.composedemo.ui.MainDestinations.ARTICLE_LIST_TITLE
 import com.example.composedemo.ui.MainDestinations.ARTICLE_ROUTE_URL
+import com.example.composedemo.ui.page.*
 import com.example.composedemo.util.getHtmlText
 import com.example.composedemo.viewmodel.MyViewModel
 import com.google.gson.Gson
@@ -84,11 +85,13 @@ fun NavGraph(
         }
         composable(
             "${MainDestinations.ARTICLE_LIST}/{$ARTICLE_LIST_ID}/{$ARTICLE_LIST_TITLE}",
-            arguments = listOf(navArgument(ARTICLE_LIST_ID) {
-                type = NavType.StringType
-            }, navArgument(ARTICLE_LIST_TITLE) {
-                type = NavType.StringType
-            })
+            arguments = listOf(
+                navArgument(ARTICLE_LIST_ID) {
+                    type = NavType.StringType
+                },
+                navArgument(ARTICLE_LIST_TITLE) {
+                    type = NavType.StringType
+                })
         ) { backStackEntry ->
             val arguments = requireNotNull(backStackEntry.arguments)
             val id = arguments.getString(ARTICLE_LIST_ID) ?: ""

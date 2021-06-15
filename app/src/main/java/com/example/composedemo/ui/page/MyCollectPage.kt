@@ -1,4 +1,4 @@
-package com.example.composedemo.ui
+package com.example.composedemo.ui.page
 
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -9,11 +9,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.example.composedemo.R
 import com.example.composedemo.bean.ArticleBean
-import com.example.composedemo.common.topBar
 import com.example.composedemo.common.SwipeToRefreshAndLoadLayout
 import com.example.composedemo.common.lce.SetLcePage
+import com.example.composedemo.common.topBar
 import com.example.composedemo.model.PlayLoading
 import com.example.composedemo.model.PlaySuccess
+import com.example.composedemo.ui.MainActions
 import com.example.composedemo.viewmodel.MyViewModel
 
 @ExperimentalFoundationApi

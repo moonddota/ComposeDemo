@@ -1,4 +1,4 @@
-package com.example.composedemo.ui
+package com.example.composedemo.ui.page
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -15,11 +15,14 @@ import com.blankj.utilcode.util.AppUtils
 import com.example.composedemo.R
 import com.example.composedemo.bean.ArticleBean
 import com.example.composedemo.bean.BannerRes
-import com.example.composedemo.common.topBar
 import com.example.composedemo.common.SwipeToRefreshAndLoadLayout
 import com.example.composedemo.common.lce.SetLcePage
+import com.example.composedemo.common.topBar
 import com.example.composedemo.model.PlayLoading
 import com.example.composedemo.model.PlaySuccess
+import com.example.composedemo.ui.MainActions
+import com.example.composedemo.ui.NoContent
+import com.example.composedemo.ui.widget.LoadImage
 import com.example.composedemo.viewmodel.MyViewModel
 import com.zj.banner.BannerPager
 import com.zj.banner.model.BaseBannerBean
@@ -46,7 +49,7 @@ fun HomePage(actions: MainActions, modifier: Modifier, myViewModel: MyViewModel)
         homeList.addAll(homeListData?.second ?: mutableListOf())
     }
 
-    if (banners.isEmpty()) myViewModel.getBanner()
+    if (banners.isEmpty())myViewModel.getBanner()
 
     SetLcePage(playState = bannerData,
         onErrorClick = { myViewModel.getBanner() }

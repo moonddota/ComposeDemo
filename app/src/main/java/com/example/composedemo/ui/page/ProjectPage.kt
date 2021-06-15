@@ -1,4 +1,4 @@
-package com.example.composedemo.ui
+package com.example.composedemo.ui.page
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -28,6 +28,7 @@ import com.example.composedemo.common.SwipeToRefreshAndLoadLayout
 import com.example.composedemo.common.lce.SetLcePage
 import com.example.composedemo.model.PlayLoading
 import com.example.composedemo.model.PlaySuccess
+import com.example.composedemo.ui.MainActions
 import com.example.composedemo.viewmodel.MyViewModel
 
 private val tables by lazy { mutableListOf<ProjectListRes>() }

@@ -1,4 +1,4 @@
-package com.example.composedemo.ui
+package com.example.composedemo.ui.page
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import com.example.composedemo.R
 import com.example.composedemo.bean.ArticleBean
 import com.example.composedemo.common.topBar
+import com.example.composedemo.ui.MainActions
 import com.example.composedemo.viewmodel.MyViewModel
 
 

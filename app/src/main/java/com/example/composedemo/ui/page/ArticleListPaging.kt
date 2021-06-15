@@ -1,4 +1,4 @@
-package com.example.composedemo.ui
+package com.example.composedemo.ui.page
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -21,6 +21,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.composedemo.R
 import com.example.composedemo.bean.ArticleBean
+import com.example.composedemo.ui.MainActions
+import com.example.composedemo.ui.NoContent
+import com.example.composedemo.ui.widget.LoadImage
 import com.example.composedemo.viewmodel.MyViewModel
 
 @ExperimentalFoundationApi

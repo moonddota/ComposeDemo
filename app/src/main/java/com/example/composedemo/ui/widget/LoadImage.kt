@@ -1,4 +1,4 @@
-package com.example.composedemo.ui
+package com.example.composedemo.ui.widget
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer

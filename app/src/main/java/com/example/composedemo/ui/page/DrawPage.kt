@@ -1,12 +1,10 @@
-package com.example.composedemo.ui
+package com.example.composedemo.ui.page
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -18,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.composedemo.R
 import com.example.composedemo.common.topBar
+import com.example.composedemo.ui.MainActions
 import com.example.composedemo.ui.draw.MyRowV4
 import com.example.composedemo.viewmodel.MyViewModel
 
@@ -71,14 +70,8 @@ private fun MyRow() {
 
 @Composable
 private fun MyCanvas() {
-    LazyColumn {
-        item{  Text(text = "asddddddddddddddddddddddddddddddddddd") }
 
-
-    }
-
-
-
+    drawLine()
 
 //                drawRect 画矩形
 //                drawRoundRect 画圆角矩形
@@ -94,6 +87,8 @@ private fun MyCanvas() {
 
 @Composable
 private fun drawLine(modifier: Modifier = Modifier.fillMaxWidth()) {
+
+
     Canvas(modifier = modifier) {
         val w = size.width
         val h = size.height
