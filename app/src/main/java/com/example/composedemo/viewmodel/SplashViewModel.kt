@@ -1,6 +1,5 @@
 package com.example.composedemo.viewmodel
 
-import androidx.lifecycle.MutableLiveData
 import com.example.composedemo.repository.SplashRepository
 import com.example.composedemo.util.MMkvHelper
 import kotlinx.coroutines.delay

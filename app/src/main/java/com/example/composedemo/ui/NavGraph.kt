@@ -42,10 +42,11 @@ object MainDestinations {
 @ExperimentalPagingApi
 @Composable
 fun NavGraph(
-    startDestination: String = MainDestinations.HOME_PAGE_ROUTE,
+//    startDestination: String = MainDestinations.HOME_PAGE_ROUTE,
+    startDestination: String = MainDestinations.DRAW_PAGE,
     modifier: Modifier
 ) {
-    val myViewModel: MyViewModel = viewModel()
+    val myViewModel = viewModel<MyViewModel>()
 
     val navController = rememberNavController()
 

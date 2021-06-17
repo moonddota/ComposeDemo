@@ -1,29 +1,34 @@
 package com.example.composedemo.ui.page
 
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
+import android.view.MotionEvent
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Scaffold
-import androidx.compose.runtime.Composable
+import androidx.compose.material.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.Color.Companion.Blue
-import androidx.compose.ui.graphics.Color.Companion.Green
-import androidx.compose.ui.graphics.Color.Companion.Red
+import androidx.compose.ui.graphics.colorspace.ColorSpaces
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.DrawScope.Companion.DefaultBlendMode
+import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.composedemo.R
 import com.example.composedemo.common.topBar
 import com.example.composedemo.ui.MainActions
-import com.example.composedemo.ui.draw.MyRowV4
+import com.example.composedemo.ui.draw.*
 import com.example.composedemo.viewmodel.MyViewModel
 
 @ExperimentalFoundationApi
 @Composable
 fun DrawPage(modifier: Modifier, actions: MainActions, myViewModel: MyViewModel) {
-
 
     Scaffold(
         modifier = modifier,
@@ -32,58 +37,118 @@ fun DrawPage(modifier: Modifier, actions: MainActions, myViewModel: MyViewModel)
                 title = stringResource(id = R.string.draw_Layout),
                 click = { actions.upPress() })
         },
-        content = {
-            Column(modifier = Modifier.fillMaxWidth()) {
-//                MyRow()
-                MyCanvas()
-            }
-        }
+        content = { MyContent() }
     )
 }
 
+@ExperimentalFoundationApi
 @Composable
-private fun MyRow() {
-    MyRowV4(
-        Modifier
-            .fillMaxWidth()
-            .height(100.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .size(200.dp)
-                .background(Blue)
+private fun MyContent() {
+    var position by remember { mutableStateOf(0) }
+    val titleList by lazy {
+        mutableListOf(
+            "画手势" to R.mipmap.ic_mine1,
+            "画直线" to R.mipmap.ic_mine2,
+            "画圆" to R.mipmap.ic_mine3,
+            "画矩形" to R.mipmap.ic_mine4,
+            "画箭头" to R.mipmap.ic_mine5,
+            "画线段" to R.mipmap.ic_mine5
         )
-        Box(
+    }
+    Column {
+        when (position) {
+            0 -> {
+                DrawGesture(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(1f)
+                )
+            }
+            1 -> {
+                StraightLine(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(1f)
+                )
+            }
+            2 -> {
+                DrawCircle(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(1f)
+                )
+            }
+            3->{
+                DrawRect(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(1f)
+                )
+            }
+            4->{
+                DrawArrow(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(1f)
+                )
+            }
+            5->{
+                DrawLineSegment(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(1f)
+                )
+            }
+        }
+
+        Row(
             modifier = Modifier
-                .height(100.dp)
-                .weight(4f)
-                .background(Red)
-        )
-        Box(
-            modifier = Modifier
-                .height(100.dp)
-                .weight(1f)
-                .background(Green)
-        )
+                .fillMaxWidth()
+                .height(60.dp)
+                .background(color = colorResource(id = R.color.main_text)),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            titleList.forEachIndexed { index, pair ->
+                DrawTab(
+                    selected = index == position,
+                    indexc = index,
+                    content = pair
+                ) {
+                    if (it != position)
+                        position = it
+                }
+            }
+        }
     }
 }
 
 @Composable
-private fun MyCanvas() {
-
-    drawLine()
-
-//                drawRect 画矩形
-//                drawRoundRect 画圆角矩形
-//                drawImage 绘制图片
-//                drawCircle 画圆形
-//                drawOval 画椭圆形
-//                drawArc 画弧度跟扇形
-//                drawPath 画路径
-//                drawPoints 画点
-
-
+private fun DrawTab(
+    selected: Boolean,
+    content: Pair<String, Int>,
+    indexc: Int,
+    onClick: (i: Int) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .padding(10.dp, 0.dp)
+            .clickable { onClick(indexc) },
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            painter = painterResource(id = content.second),
+            contentDescription = "",
+            tint = if (selected) Color.White else Color.Black
+        )
+        Text(
+            text = content.first,
+            color = if (selected) Color.White else Color.Black
+        )
+    }
 }
+
 
 @Composable
 private fun drawLine(modifier: Modifier = Modifier.fillMaxWidth()) {
@@ -173,9 +238,103 @@ private fun drawLine(modifier: Modifier = Modifier.fillMaxWidth()) {
     }
 }
 
+@Composable
+private fun drawRect(modifier: Modifier = Modifier.fillMaxWidth()) {
+    Canvas(modifier = modifier) {
+        val w = size.width
+        val h = size.height
+        drawRect(
+            brush = Brush.horizontalGradient(
+                0.0f to Color.Red,
+                0.5f to Color.Yellow,
+                1.0f to Color.Blue,
+                startX = 100f,
+                endX = w - 100f,
+                tileMode = TileMode.Clamp
+            ),
+            topLeft = Offset(100f, 600f),
+            size = Size(1000f, 300f),
+            /*FloatRange(from = 0.0, to = 1.0)*/
+            alpha = 1.0f,
+            style = Fill,
+            blendMode = DrawScope.DefaultBlendMode
+        )
+    }
+}
+
+@Composable
+private fun drawRoundRect(modifier: Modifier) {
+    Canvas(modifier = modifier) {
+        val w = size.width
+        val h = size.height
+        drawRoundRect(
+            brush = Brush.horizontalGradient(
+                0.0f to Color.Red,
+                0.5f to Color.Yellow,
+                1.0f to Color.Blue,
+                startX = 100f,
+                endX = w - 100f,
+                tileMode = TileMode.Clamp
+            ),
+            topLeft = Offset(100f, 1000f),
+            size = Size(1000f, 300f),
+            cornerRadius = CornerRadius(100f, 100f),
+            /*@FloatRange(from = 0.0, to = 1.0)*/
+            alpha = 1.0f,
+            style = Fill,
+            blendMode = DefaultBlendMode
+        )
+    }
+}
+
+@Composable
+private fun drawImage(modifier: Modifier = Modifier.fillMaxWidth()) {
+    Canvas(modifier = Modifier.fillMaxWidth()) {
+        val w = size.width
+        val h = size.height
+        drawImage(
+            image = ImageBitmap(
+                width = 300,
+                height = 300,
+                config = ImageBitmapConfig.Argb8888,
+                hasAlpha = true,
+                colorSpace = ColorSpaces.Srgb
+            ),
+            topLeft = Offset(100f, 1400f),
+            alpha = 1.0f,
+            style = Fill,
+            blendMode = DefaultBlendMode
+        )
+    }
+}
 
 
-
-
-
-
+@Composable
+fun clearDialog(onDismiss: () -> Unit = {}, onClick: () -> Unit = {}) {
+    AlertDialog(
+        onDismissRequest = {},
+        text = {
+            Text(
+                text = "确定要撤销所有吗？",
+                color = Color.Black,
+                style = MaterialTheme.typography.body1,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        },
+        buttons = {
+            Row(modifier = Modifier.fillMaxWidth()) {
+                dialogButton(
+                    Modifier.weight(1f),
+                    "取消",
+                    ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.main_text_light))
+                ) { onDismiss() }
+                dialogButton(
+                    Modifier.weight(1f),
+                    "确定",
+                    ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.main_text))
+                ) { onClick() }
+            }
+        }
+    )
+}

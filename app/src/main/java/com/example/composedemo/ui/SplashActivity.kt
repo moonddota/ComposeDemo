@@ -28,6 +28,6 @@ class SplashActivity : ComponentActivity() {
 
 @Composable
 private fun SplashContent(jumpMainActivity: () -> Unit) {
-    val viewModel: SplashViewModel = viewModel()
+    val viewModel = viewModel<SplashViewModel>()
     viewModel.listProjectsTab(jumpMainActivity)
 }

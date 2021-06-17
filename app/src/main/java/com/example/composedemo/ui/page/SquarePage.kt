@@ -25,6 +25,7 @@ import com.example.composedemo.R
 import com.example.composedemo.bean.ArticleBean
 import com.example.composedemo.bean.TreeListRes
 import com.example.composedemo.ui.MainActions
+import com.example.composedemo.ui.widget.MySelectTab
 import com.example.composedemo.ui.widget.StatusBarHeight
 import com.example.composedemo.util.ResourceUtil
 import com.example.composedemo.viewmodel.MyViewModel
@@ -53,28 +54,14 @@ fun SquarePage(actions: MainActions, modifier: Modifier, myViewModel: MyViewMode
 
     Column(modifier = modifier) {
         StatusBarHeight()
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = colorResource(id = R.color.main_text)),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            SquarePageTagList.forEachIndexed { index, s ->
-                Tab(
-                    text = { Text(text = s, fontSize = 16.sp) },
-                    selected = position == index,
-                    selectedContentColor = Color.White,
-                    unselectedContentColor = Color.Black,
-                    modifier = Modifier
-                        .width(150.dp)
-                        .padding(10.dp, 0.dp),
-                    onClick = {
-                        myViewModel.changeSquarePagePosition(index = index)
-                    }
-                )
-            }
+        MySelectTab(
+            list = SquarePageTagList,
+            modifier = Modifier.background(color = colorResource(id = R.color.main_text)),
+            position = position ?: 0
+        ){
+            myViewModel.changeSquarePagePosition(index = it)
         }
+
         when (position) {
             0 -> SquareList(SquareTrees ?: listOf(), 0, actions)
             1 -> SquareList(SquareNavis ?: listOf(), 1, actions)
@@ -178,7 +165,7 @@ fun SquareList(list: List<TreeListRes>, type: Int, actions: MainActions) {
                 }
             }
             val articles = bean.articles ?: listOf()
-            if (!bean.articles.isNullOrEmpty()) {
+            if (!articles.isNullOrEmpty()) {
                 var i = 0
                 while (i < articles.size) {
                     if (i + 1 <= articles.size - 1) {
