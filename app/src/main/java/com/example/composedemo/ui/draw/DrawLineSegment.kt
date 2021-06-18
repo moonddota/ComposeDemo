@@ -3,16 +3,28 @@ package com.example.composedemo.ui.draw
 import android.view.MotionEvent
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.drawscope.*
 import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.dp
+import com.example.composedemo.R
 import com.example.composedemo.ui.page.clearDialog
 
 
@@ -52,6 +64,18 @@ fun DrawLineSegment(modifier: Modifier) {
                 })
         )
 
+
+        Image(
+            bitmap = ImageBitmap.imageResource(id = R.mipmap.ic_launcher_round),
+            contentScale = ContentScale.Crop,
+            contentDescription = "头像",
+            modifier = Modifier
+                .padding(8.dp)
+                .size(50.dp)
+                .redPoint()
+                .clip(RoundedCornerShape(4.dp))
+        )
+
         Canvas(modifier = Modifier
             .fillMaxSize()
             .pointerInteropFilter {
@@ -72,6 +96,7 @@ fun DrawLineSegment(modifier: Modifier) {
                 }
                 true
             }) {
+
             action.let {
                 list1.forEach {
                     drawPath(
@@ -93,9 +118,7 @@ fun DrawLineSegment(modifier: Modifier) {
 
         }
     }
-
 }
-
 
 private fun getLineSegmentPath(
     a: Int,
@@ -150,4 +173,15 @@ private fun getLineSegmentPath(
     }
 
     return path
+}
+
+
+fun Modifier.redPoint(): Modifier = drawWithContent {
+    drawContent()
+    drawIntoCanvas {
+        val paint = Paint().apply {
+            color = Color.Red
+        }
+        it.drawCircle(Offset(size.width - 1.dp.toPx(), 1.dp.toPx()), 5.dp.toPx(), paint = paint)
+    }
 }
